@@ -207,7 +207,7 @@ dnl Configure which files to generate.
 dnl ---------------------------------------------------------------------------
 
 dnl AC_CONFIG_FILES(doxygen/doxyfile)
-dnl AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(libvmdetect.pc)
 
 dnl ---------------------------------------------------------------------------
