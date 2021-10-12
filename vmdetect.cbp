@@ -37,6 +37,7 @@
 		<Unit filename="src/libvmdetect/include/vmdetect/defs.h" />
 		<Unit filename="src/libvmdetect/include/vmdetect/virtualmachine.h" />
 		<Unit filename="src/libvmdetect/os/linux/virtualmachine.cc" />
+		<Unit filename="src/libvmdetect/os/windows/virtualmachine.cc" />
 		<Unit filename="src/vmdetect/vmdetect.cc" />
 		<Extensions />
 	</Project>
