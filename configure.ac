@@ -82,6 +82,7 @@ dnl ---------------------------------------------------------------------------
 
 AC_PATH_TOOL([VALGRIND], [valgrind], [no])
 AC_PATH_TOOL([AR], [ar], [ar])
+AC_PATH_TOOL([DLLTOOL], [dlltool], [dlltool])
 
 dnl ---------------------------------------------------------------------------
 dnl Check for systemd
