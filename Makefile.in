@@ -230,8 +230,8 @@ install-devel:
 
 	@mkdir -p $(DESTDIR)$(libdir)/pkgconfig
 	@$(INSTALL_DATA) \
-		libvmdetect.pc \
-		$(DESTDIR)$(libdir)/pkgconfig/libvmdetect.pc
+		vmdetect.pc \
+		$(DESTDIR)$(libdir)/pkgconfig/vmdetect.pc
 
 #---[ Uninstall Targets ]----------------------------------------------------------------
 

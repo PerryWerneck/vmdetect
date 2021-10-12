@@ -222,7 +222,7 @@ dnl ---------------------------------------------------------------------------
 
 dnl AC_CONFIG_FILES(doxygen/doxyfile)
 AC_CONFIG_FILES(Makefile)
-AC_CONFIG_FILES(libvmdetect.pc)
+AC_CONFIG_FILES(vmdetect.pc)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.
