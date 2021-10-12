@@ -55,11 +55,13 @@ dnl Check for OS specifics
 dnl ---------------------------------------------------------------------------
 
 CFLAGS="$CFLAGS -I$ac_pwd/src/libvmdetect/include"
+DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 
 case "$host" in
 	*-mingw32)
 		CFLAGS="$CFLAGS -pthread -D_WIN32_WINNT=0x0600"
 		LDFLAGS="$LDFLAGS -pthread"
+		DLL_LDFLAGS="$DLL_LDFLAGS -Wl,--output-def,\$(@D)/libvmdetect.def"
 		AC_SUBST(LIBEXT,.dll)
 		AC_SUBST(EXEEXT,.exe)
 		AC_SUBST(SONAME,libvmdetect.dll)
@@ -75,6 +77,8 @@ case "$host" in
 		AC_SUBST(OSNAME,linux)
 
 esac
+
+AC_SUBST(DLL_LDFLAGS)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for tools
