@@ -84,6 +84,15 @@ AC_PATH_TOOL([VALGRIND], [valgrind], [no])
 AC_PATH_TOOL([AR], [ar], [ar])
 
 dnl ---------------------------------------------------------------------------
+dnl Check for systemd
+dnl ---------------------------------------------------------------------------
+
+PKG_CHECK_MODULES( [SYSTEMD], [libsystemd], AC_DEFINE(HAVE_SYSTEMD,[],[Do we have systemd?]), AC_MSG_NOTICE([libsystemd not present.]) )
+AC_SUBST(SYSTEMD_CFLAGS)
+AC_SUBST(SYSTEMD_LIBS)
+
+
+dnl ---------------------------------------------------------------------------
 dnl Check for doxygen
 dnl ---------------------------------------------------------------------------
 

@@ -58,7 +58,8 @@ CFLAGS= \
 	@CXXFLAGS@ \
 	-fPIC \
 	-Isrc/libvmdetect/include \
-	-DBUILD_DATE=`date +%Y%m%d`
+	-DBUILD_DATE=`date +%Y%m%d` \
+	@SYSTEMD_CFLAGS@
 
 CPPFLAGS= \
 	@CPPFLAGS@
@@ -67,7 +68,8 @@ LDFLAGS=\
 	@LDFLAGS@
 
 LIBS= \
-	@LIBS@
+	@LIBS@ \
+	@SYSTEMD_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
