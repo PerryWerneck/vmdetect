@@ -21,7 +21,7 @@
 
 #include <config.h>
 #include <stdexcept>
-#include <udjat/tools/virtualmachine.h>
+#include <vmdetect/virtualmachine.h>
 #include <cstring>
 #include <string>
 
