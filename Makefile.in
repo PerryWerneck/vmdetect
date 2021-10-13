@@ -202,7 +202,7 @@ install-windows-lib: \
 
 	@$(INSTALL_PROGRAM) \
 		$(BINRLS)/lib$(PACKAGE_NAME)@LIBEXT@ \
-		$(DESTDIR)$(bindir)/$(PACKAGE_NAME)@LIBEXT@
+		$(DESTDIR)$(bindir)/lib$(PACKAGE_NAME)@LIBEXT@
 
 	@$(MKDIR) \
 		$(DESTDIR)$(libdir)
