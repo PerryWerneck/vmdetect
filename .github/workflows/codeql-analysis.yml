@@ -63,7 +63,7 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
     - name: Install Dependencies
-      run: apt-get install gettext libsystemd-dev
+      run: sudo apt-get install gettext libsystemd-dev
   
     - name: build
       run: | 
