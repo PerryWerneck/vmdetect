@@ -14,6 +14,11 @@ AC_CONFIG_AUX_DIR([scripts])
 dnl Compute the canonical host-system type
 AC_CANONICAL_HOST
 
+AC_CONFIG_MACRO_DIRS([m4])
+
+dnl Initialize libtool.
+LT_INIT
+
 dnl Put macro definitions here (though they aren't used).
 AC_CONFIG_HEADER([src/libvmdetect/include/config.h])
 
@@ -22,6 +27,9 @@ AM_INIT_AUTOMAKE
 
 dnl Check for iconv
 AM_ICONV
+
+dnl Set gettext version
+AM_GNU_GETTEXT_VERSION([0.14])
 
 dnl Checks for programs.
 AC_PROG_CXX
