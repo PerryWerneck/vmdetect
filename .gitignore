@@ -51,6 +51,13 @@ pkg-config.pc
 vgcore.*
 *~
 *.pc
+*.cache
+ABOUT-NLS
+intl
+libtool
+m4
+po
+
 
 # CodeBlocks
 *.layout

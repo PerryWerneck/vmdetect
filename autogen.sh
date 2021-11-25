@@ -33,6 +33,7 @@ if test $? != 0 ; then
 fi
 
 automake --add-missing 2> /dev/null | true
+autopoint
 
 test -n "$NOCONFIGURE" || "./configure" "$@"
 
