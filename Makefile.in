@@ -143,8 +143,7 @@ $(BINRLS)/$(PACKAGE_NAME)@EXEEXT@: \
 	@$(LD) \
 		-o $@ \
 		$^ \
-		-L$(BINDBG) \
-		-Wl,-rpath,$(BINDBG) \
+		-L$(BINRLS) \
 		$(LDFLAGS) \
 		$(LIBS)
 
