@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Description: @PACKAGE_NAME@ development
+Version: @PACKAGE_VERSION@
+Libs: -l@PACKAGE_NAME@.static @SYSTEMD_LIBS@
+Libs.private: @LIBS@ @UDJAT_LIBS@
+Cflags: -I@includedir@
+

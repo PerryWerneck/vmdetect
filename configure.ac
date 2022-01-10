@@ -20,7 +20,7 @@ dnl Initialize libtool.
 LT_INIT
 
 dnl Put macro definitions here (though they aren't used).
-AC_CONFIG_HEADER([src/libvmdetect/include/config.h])
+AC_CONFIG_HEADER([src/include/config.h])
 
 dnl Initialise automake stuff.
 AM_INIT_AUTOMAKE
@@ -69,11 +69,13 @@ case "$host" in
 	*-mingw32)
 		CFLAGS="$CFLAGS -pthread -D_WIN32_WINNT=0x0600"
 		LDFLAGS="$LDFLAGS -pthread"
-		DLL_LDFLAGS="$DLL_LDFLAGS -Wl,--output-def,\$(@D)/libvmdetect.def"
+		DLL_LDFLAGS="$DLL_LDFLAGS -Wl,--output-def,\$(@D)/vmdetect.def"
 		AC_SUBST(LIBEXT,.dll)
 		AC_SUBST(EXEEXT,.exe)
 		AC_SUBST(SONAME,libvmdetect.dll)
 		AC_SUBST(OSNAME,windows)
+		AC_CONFIG_FILES(sdk/windows/static.pc)
+		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
 		;;
 
  	*)
@@ -83,6 +85,8 @@ case "$host" in
 		AC_SUBST(EXEEXT)
 		AC_SUBST(SONAME,libvmdetect.so.$app_vrs_major.$app_vrs_minor)
 		AC_SUBST(OSNAME,linux)
+		AC_CONFIG_FILES(sdk/linux/static.pc)
+		AC_CONFIG_FILES(sdk/linux/dynamic.pc)
 
 esac
 
@@ -211,6 +215,7 @@ AC_ARG_ENABLE([pic],
 
 if test "$app_cv_pic" == "yes"; then
 	CFLAGS="$CFLAGS -fPIC"
+	CXXFLAGS="$CXXFLAGS -fPIC"
 fi
 
 dnl ---------------------------------------------------------------------------

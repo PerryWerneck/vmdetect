@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: @PACKAGE_NAME@
+Description: UDJAT User Monitor library
+Version: @PACKAGE_VERSION@
+Libs: -lvmdetect
+Libs.private: @LIBS@ @UDJAT_LIBS@
+Cflags: -I@includedir@
+
