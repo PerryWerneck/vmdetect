@@ -170,8 +170,17 @@ $(BINRLS)/lib$(PACKAGE_NAME).a: \
 #---[ Install Targets ]------------------------------------------------------------------
 
 install: \
+	$(BINRLS)/$(SONAME) \
+	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
 	install-@OSNAME@ \
 	install-dev
+
+	@$(MKDIR) \
+		$(DESTDIR)$(bindir)
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+		$(DESTDIR)$(bindir)
 
 install-linux: \
 	$(BINRLS)/$(SONAME)
