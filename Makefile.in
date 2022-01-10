@@ -135,8 +135,8 @@ Release: \
 	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@
 
 $(BINRLS)/$(PACKAGE_NAME)@EXEEXT@: \
-	$(BINRLS)/$(SONAME) \
-	$(foreach SRC, $(basename $(APPLICATION_SOURCES)), $(OBJRLS)/$(SRC).o)
+	$(foreach SRC, $(basename $(APPLICATION_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
 
 	@$(MKDIR) $(@D)
 	@echo $< ...
