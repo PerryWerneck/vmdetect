@@ -24,6 +24,13 @@
 #include <vmdetect/virtualmachine.h>
 #include <cstring>
 #include <string>
+#include <iostream>
+#include <cstdlib>
+
+#ifdef HAVE_WMI
+	#include <wmi.hpp>
+	#include <wmiclasses.hpp>
+#endif // HAVE_WMI
 
 using namespace std;
 
@@ -40,7 +47,9 @@ enum CpuID : uint8_t {
 	KVM,				///< @brief Running on KVM
 	QEMU,				///< @brief Running on QEMU
 	LKVM,				///< @brief Running on LKVM
-	VMM					///< @brief Running on VMM
+	VMM,				///< @brief Running on VMM
+
+	UNKNOWN				///< @brief Running on Unknown virtual machine
 };
 
 // http://git.annexia.org/?p=virt-what.git;a=tree
@@ -110,6 +119,55 @@ static CpuID getID() {
 			rc = translate(sig);
 		}
 	}
+
+#ifdef _WIN32
+	if(rc == VPC) {
+		//
+		// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
+		// https://www.splunk.com/en_us/blog/tips-and-tricks/detecting-your-hypervisor-from-within-a-windows-guest-os.html
+		//
+		static const struct {
+			CpuID		  id;
+			const char	* name;
+		} Manufacturers[] = {
+			{ QEMU,		"QEMU" 					},
+			{ XEN,		"XEN"					},
+			{ VMWARE,	"VMWARE"				},
+			{ VPC,	 	"MICROSOFT HYPER-V"		}
+		};
+
+		rc = BARE_METAL;
+
+#ifdef HAVE_WMI
+
+		try {
+
+			auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
+
+			if(!computer.Vendor.empty()) {
+
+				for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
+					computer.Vendor[ix] = toupper(computer.Vendor[ix]);
+				}
+
+				for(size_t ix = 0; ix < (sizeof(Manufacturers)/sizeof(Manufacturers[0])); ix++) {
+					if(!strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
+						rc = Manufacturers[ix].id;
+						break;
+					}
+				}
+
+			}
+
+		} catch (const Wmi::WmiException &ex) {
+			rc = UNKNOWN;
+			cerr << "Wmi error: " << ex.errorMessage << ", Code: " << ex.hexErrorCode() << endl;
+		}
+
+#endif // HAVE_WMI
+
+	}
+#endif // _WIN32
 
 	return rc;
 

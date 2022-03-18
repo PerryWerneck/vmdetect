@@ -6,7 +6,8 @@ SONAME=@SONAME@
 
 LIBRARY_SOURCES= \
 	$(wildcard src/libvmdetect/*.cc) \
-	$(wildcard src/libvmdetect/os/@OSNAME@/*.cc)
+	$(wildcard src/libvmdetect/os/@OSNAME@/*.cc) \
+	$(wildcard src/libvmdetect/os/@OSNAME@/*.rc)
 
 APPLICATION_SOURCES= \
 	$(wildcard src/vmdetect/*.cc)
@@ -60,14 +61,16 @@ CFLAGS= \
 	@CXXFLAGS@ \
 	-Isrc/include \
 	-DBUILD_DATE=`date +%Y%m%d` \
-	@SYSTEMD_CFLAGS@
+	@SYSTEMD_CFLAGS@ \
+	@WMI_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
 
 LIBS= \
 	@LIBS@ \
-	@SYSTEMD_LIBS@
+	@SYSTEMD_LIBS@ \
+	@WMI_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

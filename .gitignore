@@ -39,6 +39,7 @@ configure
 config.h
 stamp-h1
 scripts
+*.rc
 
 # Log files
 *.log
