@@ -144,6 +144,10 @@ static CpuID getID() {
 
 			auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
 
+#ifdef DEBUG
+			cout << "*** Vendor= '" << computer.Vendor << "'" << endl;
+#endif // DEBUG
+
 			if(!computer.Vendor.empty()) {
 
 				for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
@@ -151,7 +155,7 @@ static CpuID getID() {
 				}
 
 				for(size_t ix = 0; ix < (sizeof(Manufacturers)/sizeof(Manufacturers[0])); ix++) {
-					if(!strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
+					if(strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
 						rc = Manufacturers[ix].id;
 						break;
 					}
