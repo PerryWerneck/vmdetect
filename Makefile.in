@@ -27,6 +27,7 @@ WINDRES=@WINDRES@
 AR=@AR@
 VALGRIND=@VALGRIND@
 DLLTOOL=@DLLTOOL@
+STRIP=@STRIP@
 
 #---[ Paths ]----------------------------------------------------------------------------
 
@@ -205,6 +206,10 @@ install-windows: \
 		$(BINRLS)/@SONAME@ \
 		$(DESTDIR)$(bindir)/@SONAME@
 		
+	@$(STRIP) \
+		--strip-all \
+		$(DESTDIR)$(bindir)/@SONAME@
+				
 install-dev: \
 	install-@OSNAME@-dev \
 	install-@OSNAME@-static 
