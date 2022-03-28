@@ -86,7 +86,7 @@ case "$host" in
 		AC_CONFIG_FILES(sdk/windows/static.pc)
 		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
 		
-		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI,[],[Do we have wmi++?]), AC_MSG_NOTICE([libwmi++ not present.]) )		
+		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI,[],[Do we have wmi++?]), AC_MSG_ERROR([libwmi++ not present.]) )		
 		
 		AC_PATH_TOOL([WINDRES], [windres], [no])
 		AC_CONFIG_FILES(src/libvmdetect/os/windows/resources.rc)
