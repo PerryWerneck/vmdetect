@@ -1,0 +1,43 @@
+/*
+	Recursos para o @PACKAGE_NAME@ windows
+
+	$URL: http://suportelinux.df.bb.com.br/svn/suporte/aplicativos/BBtools/v2/src/os/windows/resources.rc.in $
+	$Author: c1103788 $ $Date: 2022-01-13 16:23:55 -0300 (qui, 13 jan 2022) $ $Rev: 45749 $
+
+	Referências:
+
+	<https://msdn.microsoft.com/en-us/library/windows/desktop/aa381058(v=vs.85).aspx>
+	<https://stackoverflow.com/questions/1022449/how-to-change-an-executables-properties-windows>
+	<https://stackoverflow.com/questions/708238/how-do-i-add-an-icon-to-a-mingw-gcc-compiled-executable>
+
+
+*/
+
+#include <windows.h>
+
+VS_VERSION_INFO VERSIONINFO
+FILEVERSION @PACKAGE_MAJOR_VERSION@,@PACKAGE_MINOR_VERSION@,@PACKAGE_MAJOR_RELEASE@,@PACKAGE_MINOR_RELEASE@    
+PRODUCTVERSION @PACKAGE_MAJOR_VERSION@,@PACKAGE_MINOR_VERSION@,@PACKAGE_MAJOR_RELEASE@,@PACKAGE_MINOR_RELEASE@
+
+/* CREATEPROCESS_MANIFEST_RESOURCE_ID      RT_MANIFEST "app-manifest.xml" */
+
+BEGIN
+
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041604B0"
+        BEGIN
+            VALUE "FileDescription",	"Hypervisor detection\0"
+            VALUE "FileVersion",        "@PACKAGE_MAJOR_VERSION@.@PACKAGE_MINOR_VERSION@.@PACKAGE_MAJOR_RELEASE@.@PACKAGE_MINOR_RELEASE@\0"
+            VALUE "OriginalFilename",   "@PACKAGE_NAME@.dll\0"
+            VALUE "ProductName",        "@PACKAGE_NAME@\0"
+            VALUE "ProductVersion",     "@PACKAGE_MAJOR_VERSION@.@PACKAGE_MINOR_VERSION@.@PACKAGE_MAJOR_RELEASE@.@PACKAGE_MINOR_RELEASE@\0"
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x0416, 0x04B0
+    END
+
+END
