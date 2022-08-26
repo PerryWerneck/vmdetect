@@ -37,7 +37,9 @@ BuildRequires:	gcc-c++ >= 5
 BuildRequires:	pkgconfig(libsystemd)
 
 %description
-Tool to identify virtual when the system is running in a virtual machine.
+Simple command line tool designed to detect when running under virtual machine.
+
+Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 %define MAJOR_VERSION %(echo %{version} | cut -d. -f1)
 %define MINOR_VERSION %(echo %{version} | cut -d. -f2 | cut -d+ -f1)
@@ -48,7 +50,9 @@ Summary:    Core library for %{name}
 Group:      Development/Libraries/C and C++
 
 %description -n lib%{name}%{_libvrs}
-C++ library to identify when the system is running in a virtual machine.
+C++ library designed to detect when running under virtual machine.
+
+Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 %package devel
 Summary:    C++ development files for lib%{name}
