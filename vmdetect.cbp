@@ -33,10 +33,13 @@
 			<Add option="-Wall" />
 			<Add directory="src/libvmdetect/include" />
 		</Compiler>
+		<Unit filename="src/include/config.h" />
 		<Unit filename="src/include/vmdetect/defs.h" />
 		<Unit filename="src/include/vmdetect/virtualmachine.h" />
+		<Unit filename="src/libvmdetect/common.cc" />
 		<Unit filename="src/libvmdetect/include/config.h" />
 		<Unit filename="src/libvmdetect/os/linux/virtualmachine.cc" />
+		<Unit filename="src/libvmdetect/os/windows/resources.rc" />
 		<Unit filename="src/libvmdetect/os/windows/virtualmachine.cc" />
 		<Unit filename="src/vmdetect/vmdetect.cc" />
 		<Extensions />

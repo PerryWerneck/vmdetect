@@ -109,6 +109,11 @@ const std::string VirtualMachine::to_string() const {
 
 }
 
+VMDETECT_API const char * virtual_machine_name() {
+	static const std::string name{VirtualMachine().to_string()};
+	return name.c_str();
+}
+
 #elif defined(__i386__) || defined(__x86_64__)
 
 enum CpuID : uint8_t {
@@ -199,7 +204,7 @@ VirtualMachine::operator bool() const {
 	return getID() != BARE_METAL;
 }
 
-const std::string VirtualMachine::to_string() const {
+VMDETECT_API const char * virtual_machine_name() {
 
 	static const struct Key {
 		CpuID	  	  id;
@@ -228,6 +233,10 @@ const std::string VirtualMachine::to_string() const {
 	return "Unknown";
 }
 
+const std::string VirtualMachine::to_string() const {
+	return virtual_machine_name();
+}
+
 #else // !i386, !x86_64
 
 VirtualMachine::operator bool() const {
@@ -235,6 +244,10 @@ VirtualMachine::operator bool() const {
 }
 
 const std::string VirtualMachine::to_string() const {
+	return "";
+}
+
+VMDETECT_API const char * virtual_machine_name() {
 	return "";
 }
 

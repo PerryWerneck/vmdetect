@@ -181,7 +181,7 @@ VirtualMachine::operator bool() const {
 	return getID() != BARE_METAL;
 }
 
-const std::string VirtualMachine::to_string() const {
+VMDETECT_API const char * virtual_machine_name() {
 
 	static const struct Key {
 		CpuID	  	  id;
@@ -210,10 +210,18 @@ const std::string VirtualMachine::to_string() const {
 	return "Unknown";
 }
 
+const std::string VirtualMachine::to_string() const {
+	return string{virtual_machine_name()};
+}
+
 #else // !i386, !x86_64
 
 VirtualMachine::operator bool() const {
 	return false;
+}
+
+const std::string VirtualMachine::to_string() const {
+	return "";
 }
 
 const std::string VirtualMachine::to_string() const {
