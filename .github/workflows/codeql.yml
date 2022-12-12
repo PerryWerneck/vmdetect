@@ -29,8 +29,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install --yes gettext git make libdbus-1-dev autopoint libsystemd-dev
-      - name: After Prepare
-        run: false
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
