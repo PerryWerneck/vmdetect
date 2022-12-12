@@ -26,7 +26,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Install Packages
-        run: >
+        run: |
           sudo apt-get update
           sudo apt-get install --yes gettext git make libdbus-1-dev autopoint libsystemd-dev
       - name: After Prepare
