@@ -1,3 +1,22 @@
+/* SPDX-License-Identifier: LGPL-3.0-or-later */
+
+/*
+ * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 /**
  * @file virtualmachine.cc
  *
@@ -109,6 +128,11 @@ const std::string VirtualMachine::to_string() const {
 
 }
 
+VMDETECT_API const char * virtual_machine_name() {
+	static const std::string name{VirtualMachine().to_string()};
+	return name.c_str();
+}
+
 #elif defined(__i386__) || defined(__x86_64__)
 
 enum CpuID : uint8_t {
@@ -199,7 +223,7 @@ VirtualMachine::operator bool() const {
 	return getID() != BARE_METAL;
 }
 
-const std::string VirtualMachine::to_string() const {
+VMDETECT_API const char * virtual_machine_name() {
 
 	static const struct Key {
 		CpuID	  	  id;
@@ -228,6 +252,10 @@ const std::string VirtualMachine::to_string() const {
 	return "Unknown";
 }
 
+const std::string VirtualMachine::to_string() const {
+	return virtual_machine_name();
+}
+
 #else // !i386, !x86_64
 
 VirtualMachine::operator bool() const {
@@ -235,6 +263,10 @@ VirtualMachine::operator bool() const {
 }
 
 const std::string VirtualMachine::to_string() const {
+	return "";
+}
+
+VMDETECT_API const char * virtual_machine_name() {
 	return "";
 }
 

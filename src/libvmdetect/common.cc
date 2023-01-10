@@ -17,35 +17,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
+ #include <config.h>
+ #include <vmdetect/virtualmachine.h>
 
- #include <vmdetect/defs.h>
- #include <string>
-
- class VMDETECT_API VirtualMachine {
- public:
-	operator bool() const;
-	const std::string to_string() const;
-
-	static const VirtualMachine & getInstance();
-
- };
-
- namespace std {
-
-	inline string to_string(const VirtualMachine &vm) {
-		return vm.to_string();
-	}
-
-	inline ostream& operator<< (ostream& os, const VirtualMachine &vm) {
-		return os << vm.to_string();
-	}
-
+ const VirtualMachine & VirtualMachine::getInstance() {
+	static VirtualMachine instance;
+	return instance;
  }
 
- extern "C" {
+ VMDETECT_API int virtual_machine_detected() {
 
-	VMDETECT_API int virtual_machine_detected();
-	VMDETECT_API const char * virtual_machine_name();
+	try {
+
+		if(VirtualMachine()) {
+			return 1;
+		}
+
+	} catch(...) {
+
+		return -1;
+
+	}
+
+	return 0;
 
  }

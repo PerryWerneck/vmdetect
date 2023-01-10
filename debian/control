@@ -1,0 +1,28 @@
+Source: vmdetect
+Section: unknown
+Priority: optional
+Maintainer: Perry Werneck <perry.werneck@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev, autoconf, automake, pkg-config, gettext
+
+Package: libvmdetect
+Architecture: any
+Section: libs
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Provides: libvmdetect (= ${binary:Version}), libvmdetect (= 1.0)
+Description: vmdetect Access library.
+ TNvmdetect Virtual machine detection library.
+
+Package: libvmdetect-dev
+Architecture: any
+Provides: libvmdetect-dev (= ${binary:Version})
+Section: libdevel
+Depends: ${misc:Depends}, pkg-config, libvmdetect (= ${binary:Version})
+Description: libvmdetect development files.
+Development files for virtual machine detection library
+
+Package: libvmdetect-dbg
+Architecture: any
+Depends: libvmdetect (= ${binary:Version})
+Description: Debugging symbols for libvmdetect
+ This package contains the debugging symbols for libvmdetect.
+
