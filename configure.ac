@@ -54,9 +54,18 @@ AC_DEFINE_UNQUOTED(PACKAGE_MINOR_VERSION, $app_vrs_minor, [The module minor vers
 AC_SUBST(PACKAGE_MAJOR_VERSION,$app_vrs_major)
 AC_SUBST(PACKAGE_MINOR_VERSION,$app_vrs_minor)
 
+AC_ARG_WITH([release], [AS_HELP_STRING([--with-release], [Set release])], [ app_cv_release="$withval" ],[ app_cv_release="`date +%-y`.`date +%-m`.`date +%-d`" ])
+
+app_rls_major=$(echo $app_cv_release.0.0 | cut -d. -f1)
+app_rls_minor=$(echo $app_cv_release.0.0 | cut -d. -f2)
+
 AC_DEFINE_UNQUOTED(PACKAGE_MAJOR_RELEASE, $app_rls_major, [The library major version])
 AC_DEFINE_UNQUOTED(PACKAGE_MINOR_RELEASE, $app_rls_minor, [The library minor version])
 AC_DEFINE_UNQUOTED(PACKAGE_RELEASE, "$app_cv_release", [The library release])
+
+AC_SUBST(PACKAGE_MAJOR_RELEASE,$app_rls_major)
+AC_SUBST(PACKAGE_MINOR_RELEASE,$app_rls_minor)
+AC_SUBST(PACKAGE_RELEASE,$app_cv_release)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for OS specifics
@@ -66,7 +75,7 @@ CFLAGS="$CFLAGS -I$ac_pwd/src/libvmdetect/include"
 DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 
 case "$host" in
-	*-mingw32)
+	*-mingw32|*-pc-msys)
 		CFLAGS="$CFLAGS -pthread -D_WIN32_WINNT=0x0600"
 		LDFLAGS="$LDFLAGS -pthread"
 		DLL_LDFLAGS="$DLL_LDFLAGS -Wl,--output-def,\$(@D)/vmdetect.def"
@@ -76,6 +85,12 @@ case "$host" in
 		AC_SUBST(OSNAME,windows)
 		AC_CONFIG_FILES(sdk/windows/static.pc)
 		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
+		
+		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI,[],[Do we have wmi++?]), AC_MSG_ERROR([libwmi++ not present.]) )		
+		
+		AC_PATH_TOOL([WINDRES], [windres], [no])
+		AC_CONFIG_FILES(src/libvmdetect/os/windows/resources.rc)
+
 		;;
 
  	*)
@@ -99,6 +114,7 @@ dnl ---------------------------------------------------------------------------
 AC_PATH_TOOL([VALGRIND], [valgrind], [no])
 AC_PATH_TOOL([AR], [ar], [ar])
 AC_PATH_TOOL([DLLTOOL], [dlltool], [dlltool])
+AC_PATH_TOOL([STRIP], [strip], [true])
 
 dnl ---------------------------------------------------------------------------
 dnl Check for systemd
