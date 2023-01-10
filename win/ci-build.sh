@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/bin/bash -x
 #
 # References:
 #
 #	* https://www.msys2.org/docs/ci/
 #
 #
-echo "Running ${readlink -f ${0}"
+echo "Running ${readlink -f ${0}}"
 
 LOGFILE=build.log
 rm -f ${LOGFILE}
