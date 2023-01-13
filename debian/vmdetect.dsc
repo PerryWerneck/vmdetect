@@ -1,13 +1,13 @@
 Format: 1.0
-Source: libvmdetect
+Source: vmdetect
 Version: 1.1-0
-Binary: libvmdetect
+Binary: vmdetect
 Maintainer: Perry Werneck <perry.werneck@gmail.com>
 Architecture: any
 Build-Depends: debhelper (>= 7), autotools-dev, autoconf, automake, pkg-config, gettext, libsystemd-dev
 Standards-Version: 3.9.1.0
 DEBTRANSFORM-RELEASE: 1
 Files: 
- 00000000000000000000000000000000 000000 libvmdetect-1.1.tar.bz2
+ 00000000000000000000000000000000 000000 vmdetect-1.1.tar.bz2
 
 
