@@ -8,6 +8,6 @@ Build-Depends: debhelper (>= 7), autotools-dev, autoconf, automake, pkg-config, 
 Standards-Version: 3.9.1.0
 DEBTRANSFORM-RELEASE: 1
 Files: 
- 00000000000000000000000000000000 000000 libvmdetect-1.0.tar.bz2
+ 00000000000000000000000000000000 000000 libvmdetect-1.1.tar.bz2
 
 

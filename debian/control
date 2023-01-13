@@ -10,7 +10,7 @@ Section: libs
 Depends: ${misc:Depends}, ${shlibs:Depends}
 Provides: libvmdetect (= ${binary:Version}), libvmdetect (= 1.1)
 Description: vmdetect Access library.
- TNvmdetect Virtual machine detection library.
+ vmdetect Virtual machine detection library.
 
 Package: libvmdetect-dev
 Architecture: any
