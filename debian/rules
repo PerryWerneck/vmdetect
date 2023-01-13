@@ -9,7 +9,7 @@ export DH_VERBOSE=1
 export DH_COMPAT=9
 
 # Name of the package
-PACKAGE_NAME=lib3270
+PACKAGE_NAME=libvmdetect
 
 CFLAGS = -g
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
@@ -67,7 +67,7 @@ binary-arch: build install
 	dh_testdir
 	dh_testroot
 #	dh_installdebconf
-	dh_installdocs AUTHORS LICENSE README.md
+	dh_installdocs LICENSE README.md
 	dh_installexamples
 	dh_installmenu
 #	dh_installlogrotate

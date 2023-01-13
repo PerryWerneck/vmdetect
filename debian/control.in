@@ -8,7 +8,7 @@ Package: libvmdetect
 Architecture: any
 Section: libs
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Provides: libvmdetect (= ${binary:Version}), libvmdetect (= 1.1)
+Provides: libvmdetect (= ${binary:Version}), libvmdetect (= @PACKAGE_VERSION@)
 Description: vmdetect Access library.
  TNvmdetect Virtual machine detection library.
 

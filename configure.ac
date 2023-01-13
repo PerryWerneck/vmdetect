@@ -252,6 +252,9 @@ dnl ---------------------------------------------------------------------------
 dnl AC_CONFIG_FILES(doxygen/doxyfile)
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(vmdetect.pc)
+AC_CONFIG_FILES(debian/vmdetect.dsc)
+AC_CONFIG_FILES(debian/control)
+AC_CONFIG_FILES(debian/changelog)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.
