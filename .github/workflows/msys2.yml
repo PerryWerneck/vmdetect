@@ -30,7 +30,7 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
-          artifacts: "*-vmdetect.tar.xz"
+          artifacts: "*.pkg.tar.zst"
           allowUpdates: true
           draft: false
           makeLatest: true
