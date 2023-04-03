@@ -15,7 +15,7 @@ pkgdesc="Detect when running under virtual machine"
 url="https://github.com/PerryWerneck/vmdetect"
 arch=(i686 x86_64)
 license=(GPL)
-depends=(openssl)
+depends=()
 makedepends=(autoconf automake make libtool gzip)
 checkdepends=()
 
@@ -41,7 +41,10 @@ build() {
 package() {
   cd $pkgname
   make DESTDIR="${pkgdir}" install
-  install -Dm644 "LICENSE" "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
+  install \
+    -Dm644 \
+    "LICENSE" \
+    "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 }
 
 
