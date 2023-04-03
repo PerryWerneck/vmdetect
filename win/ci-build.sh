@@ -39,3 +39,6 @@ make all  > $LOGFILE 2>&1 || die "Make failure"
 
 echo "Build complete"
 
+make DESTDIR=.bin/package install
+tar --create --xz --file=${MINGW_PACKAGE_PREFIX}-vmdetect.tar.xz --directory=.bin/package --verbose .
+

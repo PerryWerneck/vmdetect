@@ -16,14 +16,6 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-%define __strip %{_mingw64_strip}
-%define __objdump %{_mingw64_objdump}
-%define __find_requires %{_mingw64_findrequires}
-%define __find_provides %{_mingw64_findprovides}
-%define _use_internal_dependency_generator to 0
-%define __os_install_post %{_mingw64_debug_install_post} \
-                          %{_mingw64_install_post}
-
 Summary:		Detect when running under virtual machine
 Name:			mingw64-vmdetect
 Version:		1.0
@@ -46,6 +38,7 @@ BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	coreutils
 
+BuildRequires:	mingw64-filesystem
 BuildRequires:	mingw64-cross-binutils
 BuildRequires:	mingw64-cross-gcc-c++ >= 9.0
 BuildRequires:	mingw64-cross-pkg-config
@@ -56,19 +49,18 @@ BuildRequires:	mingw64-wmi++-devel
 Tool to identify virtual when the system is running in a virtual machine.
 
 %package -n mingw64-libvmdetect%{_libvrs}
-Summary:    Core library for %{name}
-Group:      Development/Libraries/C and C++
+Summary:	Core library for %{name}
+Group:		Development/Libraries/C and C++
 Provides:	mingw64-libvmdetect
+Provides:	mingw64(lib:vmdetect.dll)
 
 %description -n mingw64-libvmdetect%{_libvrs}
 C++ library to identify when the system is running in a virtual machine.
 
-%{_mingw64_debug_package}
-
 %package devel
-Summary:    C++ development files for lib%{name}
-Requires:   mingw64-libvmdetect%{_libvrs} = %{version}
-Group:      Development/Libraries/C and C++
+Summary:	C++ development files for lib%{name}
+Requires:	mingw64-libvmdetect%{_libvrs} = %{version}
+Group:		Development/Libraries/C and C++
 
 %description devel
 Header files for the %{name} library.

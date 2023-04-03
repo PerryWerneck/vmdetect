@@ -15,6 +15,11 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v3
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true
       - uses: msys2/setup-msys2@v2
         with:
           msystem: UCRT64
@@ -24,4 +29,14 @@ jobs:
         run: |
           echo 'Running in MSYS2!'
           ./win/ci-build.sh
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.gettag.outputs.tag }}
+          artifacts: "*-vmdetect.tar.xz"
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          omitBody: true
+          omitPrereleaseDuringUpdate: true
+          replacesArtifacts: true
 
