@@ -76,7 +76,7 @@ DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 
 case "$host" in
 	*-mingw32|*-pc-msys)
-		CFLAGS="$CFLAGS -pthread -D_WIN32_WINNT=0x0600"
+		CFLAGS="$CFLAGS -pthread "
 		LDFLAGS="$LDFLAGS -pthread"
 		DLL_LDFLAGS="$DLL_LDFLAGS -Wl,--output-def,\$(@D)/vmdetect.def"
 		AC_SUBST(LIBEXT,.dll)
@@ -252,6 +252,9 @@ dnl ---------------------------------------------------------------------------
 dnl AC_CONFIG_FILES(doxygen/doxyfile)
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(vmdetect.pc)
+dnl AC_CONFIG_FILES(debian/vmdetect.dsc)
+dnl AC_CONFIG_FILES(debian/control)
+dnl AC_CONFIG_FILES(debian/changelog)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.

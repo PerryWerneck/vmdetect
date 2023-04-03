@@ -1,0 +1,50 @@
+# Maintainer: Perry Werneck <perry.werneck@gmail.com>
+# References: https://www.msys2.org/wiki/Creating-Packages/
+
+_realname=vmdetect
+pkgname=${MINGW_PACKAGE_PREFIX}-${_realname}
+source=()
+
+#pkgver() {
+#  grep AC_INIT ${startdir}/configure.ac | cut -d[ -f3 | cut -d] -f1
+#}
+
+pkgver=1.1
+pkgrel=1
+pkgdesc="Detect when running under virtual machine"
+url="https://github.com/PerryWerneck/vmdetect"
+arch=(i686 x86_64)
+license=(GPL)
+depends=()
+makedepends=(autoconf automake make libtool gzip)
+checkdepends=()
+
+provides=($pkgname) 
+conflicts=($pkgname)
+
+prepare() {
+  rm -fr "$srcdir/$pkgname"
+  ln -snf "$startdir" "$srcdir/$pkgname"
+}
+
+build() {
+  cd $pkgname
+  ./autogen.sh \
+    --prefix=${MINGW_PREFIX} \
+    --build=${MINGW_CHOST} \
+    --host=${MINGW_CHOST} \
+    --target=${MINGW_CHOST}
+ 
+  make all
+}
+
+package() {
+  cd $pkgname
+  make DESTDIR="${pkgdir}" install
+  install \
+    -Dm644 \
+    "LICENSE" \
+    "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
+}
+
+

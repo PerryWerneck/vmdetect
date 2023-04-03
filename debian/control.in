@@ -1,0 +1,28 @@
+Source: @PACKAGE_NAME@
+Section: unknown
+Priority: optional
+Maintainer: Perry Werneck <perry.werneck@gmail.com>
+Build-Depends: debhelper (>= 7), autotools-dev, autoconf, automake, pkg-config, gettext
+
+Package: lib@PACKAGE_NAME@
+Architecture: any
+Section: libs
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Provides: lib@PACKAGE_NAME@ (= ${binary:Version}), lib@PACKAGE_NAME@ (= @PACKAGE_VERSION@)
+Description: @PACKAGE_NAME@ Access library.
+ @PACKAGE_NAME@ Virtual machine detection library.
+
+Package: lib@PACKAGE_NAME@-dev
+Architecture: any
+Provides: lib@PACKAGE_NAME@-dev (= ${binary:Version})
+Section: libdevel
+Depends: ${misc:Depends}, pkg-config, lib@PACKAGE_NAME@ (= ${binary:Version})
+Description: lib@PACKAGE_NAME@ development files.
+ Development files for virtual machine detection library
+
+Package: lib@PACKAGE_NAME@-dbg
+Architecture: any
+Depends: lib@PACKAGE_NAME@ (= ${binary:Version})
+Description: Debugging symbols for lib@PACKAGE_NAME@
+ This package contains the debugging symbols for lib@PACKAGE_NAME@.
+

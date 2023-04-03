@@ -8,9 +8,9 @@ Package: libvmdetect
 Architecture: any
 Section: libs
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Provides: libvmdetect (= ${binary:Version}), libvmdetect (= 1.0)
+Provides: libvmdetect (= ${binary:Version}), libvmdetect (= 1.1)
 Description: vmdetect Access library.
- TNvmdetect Virtual machine detection library.
+ vmdetect Virtual machine detection library.
 
 Package: libvmdetect-dev
 Architecture: any
@@ -18,7 +18,7 @@ Provides: libvmdetect-dev (= ${binary:Version})
 Section: libdevel
 Depends: ${misc:Depends}, pkg-config, libvmdetect (= ${binary:Version})
 Description: libvmdetect development files.
-Development files for virtual machine detection library
+ Development files for virtual machine detection library
 
 Package: libvmdetect-dbg
 Architecture: any

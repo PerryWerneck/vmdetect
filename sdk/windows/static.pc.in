@@ -4,9 +4,9 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: @PACKAGE_NAME@
-Description: UDJAT User Monitor library
+Description: @PACKAGE_NAME@ development
 Version: @PACKAGE_VERSION@
 Libs: -lvmdetect
-Libs.private: @LIBS@ @UDJAT_LIBS@
+Libs.private: @LIBS@
 Cflags: -I@includedir@
 

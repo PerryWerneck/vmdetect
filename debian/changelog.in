@@ -1,4 +1,4 @@
-vmdetect (1.1-0) unstable; urgency=low
+@PACKAGE_NAME@ (@PACKAGE_VERSION@-0) unstable; urgency=low
 
   * Initial Release
 

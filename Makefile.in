@@ -140,13 +140,15 @@ Release: \
 
 $(BINRLS)/$(PACKAGE_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(APPLICATION_SOURCES)), $(OBJRLS)/$(SRC).o) \
-	$(BINRLS)/$(SONAME)
+	$(BINRLS)/$(SONAME) \
+	$(BINRLS)/lib$(PACKAGE_NAME).a
 
 	@$(MKDIR) $(@D)
 	@echo $< ...
 	@$(LD) \
 		-o $@ \
-		$^ \
+		$(foreach SRC, $(basename $(APPLICATION_SOURCES)), $(OBJRLS)/$(SRC).o) \
+		$(BINRLS)/$(SONAME) \
 		-L$(BINRLS) \
 		$(LDFLAGS) \
 		$(LIBS)

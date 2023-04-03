@@ -1,0 +1,13 @@
+Format: 1.0
+Source: @PACKAGE_NAME@
+Version: @PACKAGE_VERSION@-0
+Binary: @PACKAGE_NAME@
+Maintainer: Perry Werneck <perry.werneck@gmail.com>
+Architecture: any
+Build-Depends: debhelper (>= 7), autotools-dev, autoconf, automake, pkg-config, gettext, libsystemd-dev
+Standards-Version: 3.9.1.0
+DEBTRANSFORM-RELEASE: 1
+Files: 
+ 00000000000000000000000000000000 000000 @PACKAGE_NAME@-@PACKAGE_VERSION@.tar.bz2
+
+
