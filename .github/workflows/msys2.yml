@@ -8,7 +8,7 @@ on:
       - master
 
 jobs:
-  msys2-ucrt64:
+  msys2-mingw:
     runs-on: windows-latest
     defaults:
       run:
