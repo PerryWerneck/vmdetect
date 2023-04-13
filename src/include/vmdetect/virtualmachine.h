@@ -20,7 +20,12 @@
  #pragma once
 
  #include <vmdetect/defs.h>
+
+#ifdef __cplusplus
+
  #include <string>
+
+ extern "C" {
 
  class VMDETECT_API VirtualMachine {
  public:
@@ -43,9 +48,11 @@
 
  }
 
- extern "C" {
+#endif
 
-	VMDETECT_API int virtual_machine_detected();
-	VMDETECT_API const char * virtual_machine_name();
+ VMDETECT_API int virtual_machine_detected();
+ VMDETECT_API const char * virtual_machine_name();
 
+#ifdef __cplusplus
  }
+#endif
