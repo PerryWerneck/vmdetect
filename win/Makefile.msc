@@ -35,15 +35,8 @@ all: \
 install: \
 	vmdetect.dll \
 	vmdetect.static.lib \
-	@echo Building library...
+	@echo Installing...
 
-	@-mkdir "$(DESTDIR)"
-	@-mkdir "$(DESTDIR)\lib"
-	@copy /Y "vmdetect.static.lib" "$(DESTDIR)\lib\vmdetect.static.lib"
-	@copy /Y "vmdetect.dll.lib" "$(DESTDIR)\lib\vmdetect.dll.lib"
-
-	@-mkdir "$(DESTDIR)\bin"
-	@copy /Y "vmdetect.dll" "$(DESTDIR)\bin\vmdetect.dll"
 
 vmdetect.exe: \
 	src/vmdetect/*.cc \
@@ -59,7 +52,6 @@ vmdetect.exe: \
 vmdetect.static.lib: \
 	src/libvmdetect/os/windows/*.cc \
 	src/libvmdetect/*.cc
-
 	@$(MAKE) \
 		/f win\Makefile.msc \
 		$(**:.cc=.obj)
@@ -72,7 +64,6 @@ vmdetect.static.lib: \
 vmdetect.dll: \
 	src/libvmdetect/os/windows/*.cc \
 	src/libvmdetect/*.cc
-
 	@$(MAKE) \
 		/f win\Makefile.msc \
 		$(**:.cc=.obj)
@@ -87,8 +78,7 @@ vmdetect.dll: \
 clean: \
 	src/libvmdetect/os/windows/*.cc \
 	src/libvmdetect/*.cc
-
-	del /Q \
+	@del /Q \
 		*.lib \
 		*.dll \
 		$(**:.cc=.obj) \
