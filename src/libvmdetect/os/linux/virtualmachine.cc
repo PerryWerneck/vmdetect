@@ -43,6 +43,7 @@
 #include <vmdetect/virtualmachine.h>
 #include <cstring>
 #include <string>
+#include <stdint.h>
 
 using namespace std;
 
