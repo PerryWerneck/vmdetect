@@ -19,21 +19,6 @@ die ( ) {
 cd $(dirname $(dirname $(readlink -f ${0})))
 
 #
-# Build LIBWMI++
-#
-#echo "Building LIBWMI++"
-#rm -fr ./wmi
-#git clone https://github.com/Thomas-Sparber/wmi.git ./wmi > $LOGFILE 2>&1 || die "clone wmi++ failure"
-#make -C wmi all  > $LOGFILE 2>&1 || die "Make failure"
-#export WMI_CFLAGS="-I./wmi/include"
-
-#
-# Install pre-reqs
-#
-echo "Installing pre-reqs..."
-pacman -U --noconfirm *.pkg.tar.zst || die "pre-reqs failure"
-
-#
 # Build VMDetect
 #
 echo "Building VMDETECT"

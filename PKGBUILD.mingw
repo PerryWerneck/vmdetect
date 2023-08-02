@@ -1,7 +1,7 @@
 # Maintainer: Perry Werneck <perry.werneck@gmail.com>
 # References: https://www.msys2.org/wiki/Creating-Packages/
 
-_realname=dmiget
+_realname=vmdetect
 pkgname=${MINGW_PACKAGE_PREFIX}-${_realname}
 source=()
 
