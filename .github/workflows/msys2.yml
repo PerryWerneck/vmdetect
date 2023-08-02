@@ -32,8 +32,8 @@ jobs:
           fileName: "mingw-w64-x86_64-wmi++-1.0-0-x86_64.pkg.tar.zst"      
       - name: CI-Build
         run: |
-        	pacman -U --noconfirm *.pkg.tar.zst
-        	./win/ci-build.sh
+          pacman -U --noconfirm *.pkg.tar.zst
+          ./win/ci-build.sh
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
