@@ -87,11 +87,12 @@ case "$host" in
 		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
 		
 		# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
-		if test -e "${prefix}/include/wmi/wmi.hpp" ; then
+		if test -e "$prefix/include/wmi/wmi.hpp" ; then
 			AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
-			LIBS="$LIBS -lwmi++ -ldiaa_sami_comsupp -lwbemuuid -loleaut32 -lole32"
-			CFLAGS="$CFLAGS -I${includedir}/wmi"
-			CXXFLAGS="$CXXFLAGS -I${includedir}/wmi"
+			LIBS="$LIBS -l:wmi.dll -lwbemuuid -loleaut32 -lole32 -lwbemuuid -loleaut32 -lole32"
+			CFLAGS="$CFLAGS -I$prefix/include/wmi"
+			CXXFLAGS="$CXXFLAGS -I$prefix/include/wmi"
+			AC_MSG_NOTICE([libwmi++ is available.])
 		else
 			AC_MSG_ERROR([libwmi++ is not available.])
 		fi

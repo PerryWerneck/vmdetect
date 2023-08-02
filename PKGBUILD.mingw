@@ -1,7 +1,7 @@
 # Maintainer: Perry Werneck <perry.werneck@gmail.com>
 # References: https://www.msys2.org/wiki/Creating-Packages/
 
-_realname=vmdetect
+_realname=dmiget
 pkgname=${MINGW_PACKAGE_PREFIX}-${_realname}
 source=()
 
@@ -9,14 +9,14 @@ source=()
 #  grep AC_INIT ${startdir}/configure.ac | cut -d[ -f3 | cut -d] -f1
 #}
 
-pkgver=1.1
+pkgver=1.0
 pkgrel=1
-pkgdesc="Detect when running under virtual machine"
-url="https://github.com/PerryWerneck/vmdetect"
+pkgdesc="Get DMI information using URL format"
+url="https://github.com/PerryWerneck/dmiget"
 arch=(i686 x86_64)
 license=(GPL)
 depends=()
-makedepends=(autoconf automake make libtool gzip ${MINGW_PACKAGE_PREFIX}-wmi++)
+makedepends=(autoconf automake make libtool gzip)
 checkdepends=()
 
 provides=($pkgname) 
@@ -24,11 +24,15 @@ conflicts=($pkgname)
 
 prepare() {
   rm -fr "$srcdir/$pkgname"
-  ln -snf "$startdir" "$srcdir/$pkgname"
+  mkdir -p $srcdir
+  ln -snf "$startdir" "$srcdir/.build"
 }
 
 build() {
-  cd $pkgname
+  echo "---"
+  echo ${PWD}
+  ls -l
+  cd .build
   ./autogen.sh \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -39,7 +43,7 @@ build() {
 }
 
 package() {
-  cd $pkgname
+  cd .build
   make DESTDIR="${pkgdir}" install
   install \
     -Dm644 \
