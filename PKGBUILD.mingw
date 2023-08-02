@@ -16,7 +16,7 @@ url="https://github.com/PerryWerneck/vmdetect"
 arch=(i686 x86_64)
 license=(GPL)
 depends=()
-makedepends=(autoconf automake make libtool gzip)
+makedepends=(autoconf automake make libtool gzip ${MINGW_PACKAGE_PREFIX}-wmi++)
 checkdepends=()
 
 provides=($pkgname) 
