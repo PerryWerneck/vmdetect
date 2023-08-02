@@ -39,7 +39,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Do we have wmi++? */
+/* libwmi++ is available */
 #undef HAVE_WMI
 
 /* Define as const if the declaration of iconv() needs const. */

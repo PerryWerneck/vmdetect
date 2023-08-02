@@ -86,7 +86,15 @@ case "$host" in
 		AC_CONFIG_FILES(sdk/windows/static.pc)
 		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
 		
-		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI,[],[Do we have wmi++?]), AC_MSG_ERROR([libwmi++ not present.]) )		
+		# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
+		if test -e "${prefix}/include/wmi/wmi.hpp" ; then
+			AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
+			LIBS="$LIBS -lwmi++ -ldiaa_sami_comsupp -lwbemuuid -loleaut32 -lole32"
+			CFLAGS="$CFLAGS -I${includedir}/wmi"
+			CXXFLAGS="$CXXFLAGS -I${includedir}/wmi"
+		else
+			AC_MSG_ERROR([libwmi++ is not available.])
+		fi
 		
 		AC_PATH_TOOL([WINDRES], [windres], [no])
 		AC_CONFIG_FILES(src/libvmdetect/os/windows/resources.rc)

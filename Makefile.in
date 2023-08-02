@@ -78,16 +78,14 @@ CFLAGS= \
 	@CXXFLAGS@ \
 	-Isrc/include \
 	-DBUILD_DATE=`date +%Y%m%d` \
-	@SYSTEMD_CFLAGS@ \
-	@WMI_CFLAGS@
+	@SYSTEMD_CFLAGS@ 
 
 LDFLAGS=\
 	@LDFLAGS@
 
 LIBS= \
 	@LIBS@ \
-	@SYSTEMD_LIBS@ \
-	@WMI_LIBS@
+	@SYSTEMD_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
