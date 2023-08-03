@@ -1,6 +1,6 @@
 # vmdetect
 
-C++ library and simple command line tool designed to detect when running under virtual machine.
+C++/python libraries and simple command line tool designed to detect when running under virtual machine.
 
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
@@ -24,6 +24,28 @@ You can download installation package for supported linux distributions in [Open
 ```shell
 vmdetect
 echo $?
+```
+
+```shell
+vmdetect -n
+Bare Metal
+```
+
+```shell
+vmdetect -i
+0
+```
+
+### Python
+
+```python
+import virtualmachine
+print(virtualmachine.name())
+```
+
+```python
+import virtualmachine
+print(virtualmachine.id())
 ```
 
 ### C++
