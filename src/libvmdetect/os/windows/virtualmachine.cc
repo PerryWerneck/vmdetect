@@ -59,186 +59,214 @@ using namespace std;
 
 /*---[ Implement ]----------------------------------------------------------------------------------*/
 
-enum CpuID : uint8_t {
-	BARE_METAL,			///< @brief Running on bare metal
-	VMWARE,				///< @brief Running on VMWare
-	VPC,				///< @brief Running on Virtual PC
-	BHIVE,				///< @brief Running on BHIVE
-	XEN,				///< @brief Running on XEN
-	KVM,				///< @brief Running on KVM
-	QEMU,				///< @brief Running on QEMU
-	LKVM,				///< @brief Running on LKVM
-	VMM,				///< @brief Running on VMM
+#if defined(MSC_VER)
 
-	UNKNOWN				///< @brief Running on Unknown virtual machine
-};
+	// https://learn.microsoft.com/en-us/cpp/intrinsics/cpuid-cpuidex?view=msvc-170
 
-// http://git.annexia.org/?p=virt-what.git;a=tree
-static unsigned int cpuid(unsigned int eax, char *sig) {
+	VirtualMachine::operator bool() const {
+		return false;
+	}
 
-#ifdef _MSC_VER
+	std::string VirtualMachine::name() const {
+		return "";
+	}
 
-	return 0;
+	std::string VirtualMachine::name() const {
+		return "";
+	}
 
-#else
+#elif defined(__i386__) || defined(__x86_64__)
 
-	unsigned int *sig32 = (unsigned int *) sig;
+	enum CpuID : uint8_t {
+		BARE_METAL,			///< @brief Running on bare metal
+		VMWARE,				///< @brief Running on VMWare
+		VPC,				///< @brief Running on Virtual PC
+		BHIVE,				///< @brief Running on BHIVE
+		XEN,				///< @brief Running on XEN
+		KVM,				///< @brief Running on KVM
+		QEMU,				///< @brief Running on QEMU
+		LKVM,				///< @brief Running on LKVM
+		VMM,				///< @brief Running on VMM
 
-	asm volatile (
-		"xchgl %%ebx,%1; xor %%ebx,%%ebx; cpuid; xchgl %%ebx,%1"
-		: "=a" (eax), "+r" (sig32[0]), "=c" (sig32[1]), "=d" (sig32[2])
-		: "0" (eax)
-	);
-	sig[12] = 0;
-
-	return eax;
-
-#endif // _MSC_VER
-}
-
-static CpuID translate(const char *sig) {
-
-	static const struct Key {
-		CpuID		  id;
-		const char	* sig;
-	} keys[] = {
-		{ VMWARE,	"VMwareVMware"	},
-		{ VPC,		"Microsoft Hv"	},
-		{ BHIVE,	"bhyve bhyve"	},
-		{ XEN,		"XenVMMXenVMM"	},
-		{ KVM,		"KVMKVMKVM"		},
-		{ QEMU,		"TCGTCGTCGTCG"	},
-		{ LKVM,		"LKVMLKVMLKVM"	},
-		{ VMM,		"OpenBSDVMM58"	}
+		UNKNOWN				///< @brief Running on Unknown virtual machine
 	};
 
-	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
-		if(!strcmp(sig,keys[ix].sig)) {
-			return keys[ix].id;
-		}
+	// http://git.annexia.org/?p=virt-what.git;a=tree
+	static unsigned int cpuid(unsigned int eax, char *sig) {
+
+		unsigned int *sig32 = (unsigned int *) sig;
+
+		asm volatile (
+			"xchgl %%ebx,%1; xor %%ebx,%%ebx; cpuid; xchgl %%ebx,%1"
+			: "=a" (eax), "+r" (sig32[0]), "=c" (sig32[1]), "=d" (sig32[2])
+			: "0" (eax)
+		);
+		sig[12] = 0;
+
+		return eax;
+
 	}
 
-	return BARE_METAL;
-}
+	static CpuID translate(const char *sig) {
 
-static CpuID getID() {
-
-	CpuID rc = BARE_METAL;
-	char sig[13];
-
-	unsigned int base = 0x40000000, leaf = base;
-	unsigned int max_entries;
-
-	memset (sig, 0, sizeof sig);
-	max_entries = cpuid (leaf, sig);
-	rc = translate(sig);
-
-	//
-	// Most hypervisors only have information in leaf 0x40000000, but
-	// upstream Xen contains further leaf entries (in particular when
-	// used with Viridian [HyperV] extensions).  CPUID is supposed to
-	// return the maximum leaf offset in %eax, so that's what we use,
-	// but only if it looks sensible.
-	//
-	if (rc == BARE_METAL && max_entries > 3 && max_entries < 0x10000) {
-		for (leaf = base + 0x100; leaf <= base + max_entries && rc == BARE_METAL; leaf += 0x100) {
-			memset (sig, 0, sizeof sig);
-			cpuid (leaf, sig);
-			rc = translate(sig);
-		}
-	}
-
-	if(rc == VPC) {
-		//
-		// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
-		// https://www.splunk.com/en_us/blog/tips-and-tricks/detecting-your-hypervisor-from-within-a-windows-guest-os.html
-		//
-		static const struct {
+		static const struct Key {
 			CpuID		  id;
-			const char	* name;
-		} Manufacturers[] = {
-			{ QEMU,		"QEMU" 					},
-			{ XEN,		"XEN"					},
-			{ VMWARE,	"VMWARE"				},
-			{ VPC,	 	"MICROSOFT HYPER-V"		}
+			const char	* sig;
+		} keys[] = {
+			{ VMWARE,	"VMwareVMware"	},
+			{ VPC,		"Microsoft Hv"	},
+			{ BHIVE,	"bhyve bhyve"	},
+			{ XEN,		"XenVMMXenVMM"	},
+			{ KVM,		"KVMKVMKVM"		},
+			{ QEMU,		"TCGTCGTCGTCG"	},
+			{ LKVM,		"LKVMLKVMLKVM"	},
+			{ VMM,		"OpenBSDVMM58"	}
 		};
 
-		rc = BARE_METAL;
+		for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
+			if(!strcmp(sig,keys[ix].sig)) {
+				return keys[ix].id;
+			}
+		}
 
-#ifdef HAVE_WMI
+		return BARE_METAL;
+	}
 
-		try {
+	static CpuID getID() {
 
-			auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
+		CpuID rc = BARE_METAL;
+		char sig[13];
 
-#ifdef DEBUG
-			cout << "*** Vendor= '" << computer.Vendor << "'" << endl;
-#endif // DEBUG
+		unsigned int base = 0x40000000, leaf = base;
+		unsigned int max_entries;
 
-			if(!computer.Vendor.empty()) {
+		memset (sig, 0, sizeof sig);
+		max_entries = cpuid (leaf, sig);
+		rc = translate(sig);
 
-				for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
-					computer.Vendor[ix] = toupper(computer.Vendor[ix]);
-				}
+		//
+		// Most hypervisors only have information in leaf 0x40000000, but
+		// upstream Xen contains further leaf entries (in particular when
+		// used with Viridian [HyperV] extensions).  CPUID is supposed to
+		// return the maximum leaf offset in %eax, so that's what we use,
+		// but only if it looks sensible.
+		//
+		if (rc == BARE_METAL && max_entries > 3 && max_entries < 0x10000) {
+			for (leaf = base + 0x100; leaf <= base + max_entries && rc == BARE_METAL; leaf += 0x100) {
+				memset (sig, 0, sizeof sig);
+				cpuid (leaf, sig);
+				rc = translate(sig);
+			}
+		}
 
-				for(size_t ix = 0; ix < (sizeof(Manufacturers)/sizeof(Manufacturers[0])); ix++) {
-					if(strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
-						rc = Manufacturers[ix].id;
-						break;
+		if(rc == VPC) {
+			//
+			// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
+			// https://www.splunk.com/en_us/blog/tips-and-tricks/detecting-your-hypervisor-from-within-a-windows-guest-os.html
+			//
+			static const struct {
+				CpuID		  id;
+				const char	* name;
+			} Manufacturers[] = {
+				{ QEMU,		"QEMU" 					},
+				{ XEN,		"XEN"					},
+				{ VMWARE,	"VMWARE"				},
+				{ VPC,	 	"MICROSOFT HYPER-V"		}
+			};
+
+			rc = BARE_METAL;
+
+	#ifdef HAVE_WMI
+
+			try {
+
+				auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
+
+	#ifdef DEBUG
+				cout << "*** Vendor= '" << computer.Vendor << "'" << endl;
+	#endif // DEBUG
+
+				if(!computer.Vendor.empty()) {
+
+					for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
+						computer.Vendor[ix] = toupper(computer.Vendor[ix]);
 					}
+
+					for(size_t ix = 0; ix < (sizeof(Manufacturers)/sizeof(Manufacturers[0])); ix++) {
+						if(strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
+							rc = Manufacturers[ix].id;
+							break;
+						}
+					}
+
 				}
 
+			} catch (const Wmi::WmiException &ex) {
+				rc = UNKNOWN;
+				cerr << "Wmi error: " << ex.errorMessage << ", Code: " << ex.hexErrorCode() << endl;
 			}
 
-		} catch (const Wmi::WmiException &ex) {
-			rc = UNKNOWN;
-			cerr << "Wmi error: " << ex.errorMessage << ", Code: " << ex.hexErrorCode() << endl;
+	#endif // HAVE_WMI
+
 		}
 
-#endif // HAVE_WMI
+		return rc;
 
 	}
 
-	return rc;
+	VirtualMachine::operator bool() const {
+		return getID() != BARE_METAL;
+	}
 
-}
+	VMDETECT_API const char * virtual_machine_name() {
 
-VirtualMachine::operator bool() const {
-	return getID() != BARE_METAL;
-}
+		static const struct Key {
+			CpuID	  	  id;
+			const char	* name;
+		} keys[] = {
+			{ VMWARE,	"VMware"		},
+			{ VPC,		"Microsoft Hv"	},
+			{ BHIVE,	"bhyve"			},
+			{ XEN,		"Xen"			},
+			{ KVM,		"KVM"			},
+			{ QEMU,		"QEMU"			},
+			{ LKVM,		"LKVM"			},
+			{ VMM,		"OpenBSDVMM58"	}
+		};
 
-VMDETECT_API const char * virtual_machine_name() {
+		CpuID id = getID();
+		if(id == BARE_METAL)
+			return "";
 
-	static const struct Key {
-		CpuID	  	  id;
-		const char	* name;
-	} keys[] = {
-		{ VMWARE,	"VMware"		},
-		{ VPC,		"Microsoft Hv"	},
-		{ BHIVE,	"bhyve"			},
-		{ XEN,		"Xen"			},
-		{ KVM,		"KVM"			},
-		{ QEMU,		"QEMU"			},
-		{ LKVM,		"LKVM"			},
-		{ VMM,		"OpenBSDVMM58"	}
-	};
+		for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
+			if(id == keys[ix].id) {
+				return keys[ix].name;
+			}
+		}
 
-	CpuID id = getID();
-	if(id == BARE_METAL)
+		return "Unknown";
+	}
+
+	std::string VirtualMachine::name() const {
+		return string{virtual_machine_name()};
+	}
+
+#else // !i386, !x86_64
+
+	VirtualMachine::operator bool() const {
+		return false;
+	}
+
+	std::string VirtualMachine::name() const {
 		return "";
-
-	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
-		if(id == keys[ix].id) {
-			return keys[ix].name;
-		}
 	}
 
-	return "Unknown";
-}
+	std::string VirtualMachine::name() const {
+		return "";
+	}
 
-std::string VirtualMachine::name() const {
-	return string{virtual_machine_name()};
-}
+#endif // !i386, !x86_64
+
 
 
 
