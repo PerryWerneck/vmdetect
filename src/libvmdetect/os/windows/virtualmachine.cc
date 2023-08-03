@@ -57,8 +57,6 @@
  std::string VirtualMachine::name() const {
 
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
-	string virtualization;
-
 	static const struct Key {
 		CpuID	  	  id;
 		const char	* name;
