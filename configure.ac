@@ -128,27 +128,23 @@ dnl ---------------------------------------------------------------------------
 dnl Check for wmi++
 dnl ---------------------------------------------------------------------------
 
-case "$host" in
-	*-mingw32)
-		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available from pkg-config]), AC_MSG_NOTICE([libwmi++ is not available.]) )
-		;;
+PKG_CHECK_MODULES( [WMI], [wmi++], app_cv_wmi="yes", app_cv_wmi="no" )
 
-	*-pc-msys)
-		# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
-		if test -e "$prefix/include/wmi/wmi.hpp" ; then
-			AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
-			WMI_LIBS="-l:wmi.dll -lwbemuuid -loleaut32 -lole32 -lwbemuuid -loleaut32 -lole32"
-			WMI_CFLAGS="-I$prefix/include/wmi"
-			AC_MSG_NOTICE([libwmi++ is available.])
-		else
-			AC_MSG_ERROR([libwmi++ is not available.])
-		fi	
-		;;
-		
-	*)
-		AC_MSG_NOTICE([libwmi++ is not available.])
-		
-esac
+if test "$app_cv_wmi" == "yes"; then
+
+	AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available from pkg-config])
+
+else
+
+	# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
+	if test -e "$prefix/include/wmi/wmi.hpp" ; then
+		AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
+		WMI_LIBS="-l:wmi.dll -lwbemuuid -loleaut32 -lole32 -lwbemuuid -loleaut32 -lole32"
+		WMI_CFLAGS="-I$prefix/include/wmi"
+		AC_MSG_NOTICE([libwmi++ is available from system path.])
+	fi	
+
+fi
 
 AC_SUBST(WMI_CFLAGS)
 AC_SUBST(WMI_LIBS)

@@ -59,8 +59,6 @@ using namespace std;
 
 /*---[ Implement ]----------------------------------------------------------------------------------*/
 
-#if defined(__i386__) || defined(__x86_64__)
-
 enum CpuID : uint8_t {
 	BARE_METAL,			///< @brief Running on bare metal
 	VMWARE,				///< @brief Running on VMWare
@@ -78,6 +76,12 @@ enum CpuID : uint8_t {
 // http://git.annexia.org/?p=virt-what.git;a=tree
 static unsigned int cpuid(unsigned int eax, char *sig) {
 
+#ifdef _MSC_VER
+
+	return 0;
+
+#else
+
 	unsigned int *sig32 = (unsigned int *) sig;
 
 	asm volatile (
@@ -89,6 +93,7 @@ static unsigned int cpuid(unsigned int eax, char *sig) {
 
 	return eax;
 
+#endif // _MSC_VER
 }
 
 static CpuID translate(const char *sig) {
@@ -231,26 +236,9 @@ VMDETECT_API const char * virtual_machine_name() {
 	return "Unknown";
 }
 
-const std::string VirtualMachine::to_string() const {
+std::string VirtualMachine::name() const {
 	return string{virtual_machine_name()};
 }
-
-#else // !i386, !x86_64
-
-VirtualMachine::operator bool() const {
-	return false;
-}
-
-const std::string VirtualMachine::to_string() const {
-	return "";
-}
-
-const std::string VirtualMachine::to_string() const {
-	return "";
-}
-
-#endif // !i386, !x86_64
-
 
 
 

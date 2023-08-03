@@ -21,7 +21,7 @@
 
  #include <vmdetect/defs.h>
 
-#ifdef __cplusplus
+ #ifdef __cplusplus
 
  #include <string>
 
@@ -30,25 +30,27 @@
  class VMDETECT_API VirtualMachine {
  public:
 	operator bool() const;
-	const std::string to_string() const;
+	std::string name() const;
 
 	static const VirtualMachine & getInstance();
 
  };
 
+ #ifndef _MSC_VER
  namespace std {
 
 	inline string to_string(const VirtualMachine &vm) {
-		return vm.to_string();
+		return vm.name();
 	}
 
 	inline ostream& operator<< (ostream& os, const VirtualMachine &vm) {
-		return os << vm.to_string();
+		return os << vm.name();
 	}
 
  }
+ #endif // !_MSC_VER
 
-#endif
+ #endif // __cplusplus
 
  VMDETECT_API int virtual_machine_detected();
  VMDETECT_API const char * virtual_machine_name();

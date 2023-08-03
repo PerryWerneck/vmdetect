@@ -39,19 +39,19 @@ install: \
 
 
 vmdetect.exe: \
-	src/vmdetect/*.cc \
-	src/libvmdetect/os/windows/*.cc \
-	src/libvmdetect/*.cc
+	src\vmdetect\*.cc \
+	src\libvmdetect\os\windows\*.cc \
+	src\libvmdetect\*.cc
 	
 	@echo Build exe file....
 	link \
-		/nologo \
+		/nologo  /LTCG \
 		/OUT:"$@" \
 		$(**:.cc=.obj)
 
 vmdetect.static.lib: \
-	src/libvmdetect/os/windows/*.cc \
-	src/libvmdetect/*.cc
+	src\libvmdetect\os\windows\*.cc \
+	src\libvmdetect\*.cc
 	@$(MAKE) \
 		/f win\Makefile.msc \
 		$(**:.cc=.obj)
@@ -62,23 +62,24 @@ vmdetect.static.lib: \
 		$(**:.cc=.obj)
 
 vmdetect.dll: \
-	src/libvmdetect/os/windows/*.cc \
-	src/libvmdetect/*.cc
+	src\libvmdetect\os\windows\*.cc \
+	src\libvmdetect\*.cc
 	@$(MAKE) \
 		/f win\Makefile.msc \
 		$(**:.cc=.obj)
 
 	@link \
-		/NOLOGO \
+		/NOLOGO  /LTCG \
 		/DLL \
 		/OUT:"$@" \
 		/IMPLIB:vmdetect.dll.lib \
 		$(**:.cc=.obj)
 
 clean: \
-	src/libvmdetect/os/windows/*.cc \
-	src/libvmdetect/*.cc
-	@del /Q \
+	src\vmdetect\*.cc \
+	src\libvmdetect\os\windows\*.cc \
+	src\libvmdetect\*.cc
+	del /Q \
 		*.lib \
 		*.dll \
 		$(**:.cc=.obj) \

@@ -56,10 +56,10 @@ using namespace std;
 #ifdef HAVE_SYSTEMD
 
 VirtualMachine::operator bool() const {
-	return !to_string().empty();
+	return !name().empty();
 }
 
-const std::string VirtualMachine::to_string() const {
+const std::string VirtualMachine::name() const {
 
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
 	string virtualization = "";
@@ -130,7 +130,7 @@ const std::string VirtualMachine::to_string() const {
 }
 
 VMDETECT_API const char * virtual_machine_name() {
-	static const std::string name{VirtualMachine().to_string()};
+	static const std::string name{VirtualMachine().name()};
 	return name.c_str();
 }
 
@@ -253,7 +253,7 @@ VMDETECT_API const char * virtual_machine_name() {
 	return "Unknown";
 }
 
-const std::string VirtualMachine::to_string() const {
+std::string VirtualMachine::name() const {
 	return virtual_machine_name();
 }
 
@@ -263,7 +263,7 @@ VirtualMachine::operator bool() const {
 	return false;
 }
 
-const std::string VirtualMachine::to_string() const {
+std::string VirtualMachine::name() const {
 	return "";
 }
 
