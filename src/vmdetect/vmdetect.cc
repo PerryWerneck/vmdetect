@@ -44,7 +44,7 @@
  } workers[] {
 	{
 		'n',"name",
-		"Verbose output (default)",
+		"Show virtual machine name ('Bare metal' if not virtual)",
 		false,
 		[](const char *) {
 			VirtualMachine vm;
@@ -52,6 +52,20 @@
 				cout << vm.name() << endl;
 			} else {
 				cout << "Bare metal" << endl;
+			}
+			return false;
+		}
+	},
+	{
+		'i',"id",
+		"Show CPU ID",
+		false,
+		[](const char *) {
+			VirtualMachine vm;
+			if(vm) {
+				cout << ((int) vm.id()) << endl;
+			} else {
+				cout << "0" << endl;
 			}
 			return false;
 		}
