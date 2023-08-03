@@ -34,12 +34,16 @@ echo $?
 
 using namespace std;
 
-VirtualMachine vm;
+int main(int argc, char **argv) {
+	VirtualMachine vm;
 
-if(vm) {
-	cout << "Running on '" << vm << "' virtual machine" << endl 
+	if(vm) {
+		cout << "Running on '" << vm << "' virtual machine" << endl;
+		return 1;
+	}
+
+	return 0;
 }
-
 ```
 
 
