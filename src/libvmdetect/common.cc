@@ -22,10 +22,47 @@
  #endif // HAVE_CONFIG_H
 
  #include <vmdetect/virtualmachine.h>
+ #include <cstring>
 
  const VirtualMachine & VirtualMachine::getInstance() {
 	static VirtualMachine instance;
 	return instance;
+ }
+
+ VirtualMachine::operator bool() const {
+	return !name().empty();
+ }
+
+ VirtualMachine::CpuID VirtualMachine::translate(const char *sig) const {
+
+	static const struct Key {
+		CpuID		  id;
+		const char	* sig;
+	} keys[] = {
+		{ VMWARE,	"VMwareVMware"	},
+		{ VPC,		"Microsoft Hv"	},
+		{ BHIVE,	"bhyve bhyve"	},
+		{ XEN,		"XenVMMXenVMM"	},
+		{ KVM,		"KVMKVMKVM"		},
+		{ QEMU,		"TCGTCGTCGTCG"	},
+		{ LKVM,		"LKVMLKVMLKVM"	},
+		{ VMM,		"OpenBSDVMM58"	}
+	};
+
+	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
+		if(!strcmp(sig,keys[ix].sig)) {
+			return keys[ix].id;
+		}
+	}
+
+	return BARE_METAL;
+
+ }
+
+
+ VMDETECT_API const char * virtual_machine_name() {
+	static const std::string name{VirtualMachine().name()};
+	return name.c_str();
  }
 
  VMDETECT_API int virtual_machine_detected() {

@@ -29,26 +29,46 @@
 
  class VMDETECT_API VirtualMachine {
  public:
+
+	enum CpuID : uint8_t {
+		BARE_METAL,			///< @brief Running on bare metal
+		VMWARE,				///< @brief Running on VMWare
+		VPC,				///< @brief Running on Virtual PC
+		BHIVE,				///< @brief Running on BHIVE
+		XEN,				///< @brief Running on XEN
+		KVM,				///< @brief Running on KVM
+		QEMU,				///< @brief Running on QEMU
+		LKVM,				///< @brief Running on LKVM
+		VMM,				///< @brief Running on VMM
+
+		UNKNOWN				///< @brief Running on Unknown virtual machine
+	};
+
+ 	CpuID id() const;
+
 	operator bool() const;
 	std::string name() const;
 
 	static const VirtualMachine & getInstance();
 
+ private:
+	CpuID translate(const char *sig) const;
+
  };
 
- #ifndef _MSC_VER
  namespace std {
 
+ #ifndef _MSC_VER
 	inline string to_string(const VirtualMachine &vm) {
 		return vm.name();
 	}
+ #endif // !_MSC_VER
 
 	inline ostream& operator<< (ostream& os, const VirtualMachine &vm) {
 		return os << vm.name();
 	}
 
  }
- #endif // !_MSC_VER
 
  #endif // __cplusplus
 

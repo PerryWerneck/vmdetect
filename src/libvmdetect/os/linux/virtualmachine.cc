@@ -38,118 +38,126 @@
  *
  */
 
-#include <config.h>
-#include <stdexcept>
-#include <vmdetect/virtualmachine.h>
-#include <cstring>
-#include <string>
-#include <stdint.h>
 
-using namespace std;
+ #include <config.h>
+ #include <stdexcept>
+ #include <vmdetect/virtualmachine.h>
+ #include <cstring>
+ #include <string>
+ #include <stdint.h>
 
-#ifdef HAVE_SYSTEMD
+ using namespace std;
+
+ #ifdef HAVE_SYSTEMD
 	#include <systemd/sd-bus.h>
-#endif // HAVE_SYSTEMD
+ #endif // HAVE_SYSTEMD
 
 /*---[ Implement ]----------------------------------------------------------------------------------*/
 
-#ifdef HAVE_SYSTEMD
-
-VirtualMachine::operator bool() const {
-	return !name().empty();
-}
-
-const std::string VirtualMachine::name() const {
+ std::string VirtualMachine::name() const {
 
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
-	string virtualization = "";
+	string virtualization;
 
+ #ifdef HAVE_SYSTEMD
 	sd_bus * bus = NULL;
-	if(sd_bus_open_system(&bus) < 0) {
-		throw runtime_error("Can't open system bus");
-	}
+	if(sd_bus_open_system(&bus)) {
 
-	try {
+		try {
 
-		/*
-			dbus-send \
-				--session \
-				--dest=org.freedesktop.systemd1 \
-				--print-reply \
-				"/org/freedesktop/systemd1" \
-				"org.freedesktop.DBus.Properties.Get" \
-				string:"org.freedesktop.systemd1.Manager" \
-				string:"Virtualization"
-		*/
+			/*
+				dbus-send \
+					--session \
+					--dest=org.freedesktop.systemd1 \
+					--print-reply \
+					"/org/freedesktop/systemd1" \
+					"org.freedesktop.DBus.Properties.Get" \
+					string:"org.freedesktop.systemd1.Manager" \
+					string:"Virtualization"
+			*/
 
-		sd_bus_error error = SD_BUS_ERROR_NULL;
-		sd_bus_message *response = NULL;
+			sd_bus_error error = SD_BUS_ERROR_NULL;
+			sd_bus_message *response = NULL;
 
-		int rc = sd_bus_call_method(
-				bus,                   					// On the System Bus
-				"org.freedesktop.systemd1",				// Service to contact
-				"/org/freedesktop/systemd1", 			// Object path
-				"org.freedesktop.DBus.Properties",		// Interface name
-				"Get",									// Method to be called
-				&error,									// object to return error
-				&response,								// Response message on success
-				"ss",
-				"org.freedesktop.systemd1.Manager",
-				"Virtualization"
-		);
+			int rc = sd_bus_call_method(
+					bus,                   					// On the System Bus
+					"org.freedesktop.systemd1",				// Service to contact
+					"/org/freedesktop/systemd1", 			// Object path
+					"org.freedesktop.DBus.Properties",		// Interface name
+					"Get",									// Method to be called
+					&error,									// object to return error
+					&response,								// Response message on success
+					"ss",
+					"org.freedesktop.systemd1.Manager",
+					"Virtualization"
+			);
 
-		if(rc < 0) {
-			string err = error.message;
-			sd_bus_error_free(&error);
-			throw runtime_error(err);;
+			if(rc < 0) {
+				string err = error.message;
+				sd_bus_error_free(&error);
+				throw runtime_error(err);;
 
-		} else if(response) {
+			} else if(response) {
 
-			char *text = NULL;
+				char *text = NULL;
 
-			if(sd_bus_message_read(response, "v", "s", &text) < 0) {
+				if(sd_bus_message_read(response, "v", "s", &text) < 0) {
+					sd_bus_message_unref(response);
+					throw runtime_error("Can't parse systemd virtualization response");
+				} else if(text && *text) {
+					virtualization = text;
+				}
+
 				sd_bus_message_unref(response);
-				throw runtime_error("Can't parse systemd virtualization response");
-			} else if(text && *text) {
-				virtualization = text;
+
 			}
 
-			sd_bus_message_unref(response);
-
+		} catch(...) {
+			sd_bus_flush_close_unref(bus);
+			throw;
 		}
 
-	} catch(...) {
 		sd_bus_flush_close_unref(bus);
-		throw;
+
+		return virtualization;
+
+	}
+#endif // HAVE_SYSTEMD
+
+	// Cant get from SystemD, fallback
+
+	static const struct Key {
+		CpuID	  	  id;
+		const char	* name;
+	} keys[] = {
+		{ VMWARE,	"VMware"		},
+		{ VPC,		"Microsoft Hv"	},
+		{ BHIVE,	"bhyve"			},
+		{ XEN,		"Xen"			},
+		{ KVM,		"KVM"			},
+		{ QEMU,		"QEMU"			},
+		{ LKVM,		"LKVM"			},
+		{ VMM,		"OpenBSDVMM58"	}
+	};
+
+	CpuID cpuid = this->id();
+	if(cpuid == BARE_METAL)
+		return "";
+
+	if(cpuid != UNKNOWN) {
+		for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
+			if(cpuid == keys[ix].id) {
+				return keys[ix].name;
+			}
+		}
 	}
 
-	sd_bus_flush_close_unref(bus);
+	return "Unknown";
 
-	return virtualization;
+ }
 
-}
-
-VMDETECT_API const char * virtual_machine_name() {
-	static const std::string name{VirtualMachine().name()};
-	return name.c_str();
-}
-
-#elif defined(__i386__) || defined(__x86_64__)
-
-enum CpuID : uint8_t {
-	BARE_METAL,			///< @brief Running on bare metal
-	VMWARE,				///< @brief Running on VMWare
-	VPC,				///< @brief Running on Virtual PC
-	BHIVE,				///< @brief Running on BHIVE
-	XEN,				///< @brief Running on XEN
-	KVM,				///< @brief Running on KVM
-	QEMU,				///< @brief Running on QEMU
-	LKVM,				///< @brief Running on LKVM
-	VMM					///< @brief Running on VMM
-};
-
-// http://git.annexia.org/?p=virt-what.git;a=tree
-static unsigned int cpuid(unsigned int eax, char *sig) {
+ // http://git.annexia.org/?p=virt-what.git;a=tree
+ static unsigned int cpuid(unsigned int eax, char *sig) {
 
 	unsigned int *sig32 = (unsigned int *) sig;
 
@@ -162,34 +170,9 @@ static unsigned int cpuid(unsigned int eax, char *sig) {
 
 	return eax;
 
-}
+ }
 
-static CpuID translate(const char *sig) {
-
-	static const struct Key {
-		CpuID		  id;
-		const char	* sig;
-	} keys[] = {
-		{ VMWARE,	"VMwareVMware"	},
-		{ VPC,		"Microsoft Hv"	},
-		{ BHIVE,	"bhyve bhyve"	},
-		{ XEN,		"XenVMMXenVMM"	},
-		{ KVM,		"KVMKVMKVM"		},
-		{ QEMU,		"TCGTCGTCGTCG"	},
-		{ LKVM,		"LKVMLKVMLKVM"	},
-		{ VMM,		"OpenBSDVMM58"	}
-	};
-
-	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
-		if(!strcmp(sig,keys[ix].sig)) {
-			return keys[ix].id;
-		}
-	}
-
-	return BARE_METAL;
-}
-
-static CpuID getID() {
+ VirtualMachine::CpuID VirtualMachine::id() const {
 
 	CpuID rc = BARE_METAL;
 	char sig[13];
@@ -218,61 +201,7 @@ static CpuID getID() {
 
 	return rc;
 
-}
-
-VirtualMachine::operator bool() const {
-	return getID() != BARE_METAL;
-}
-
-VMDETECT_API const char * virtual_machine_name() {
-
-	static const struct Key {
-		CpuID	  	  id;
-		const char	* name;
-	} keys[] = {
-		{ VMWARE,	"VMware"		},
-		{ VPC,		"Microsoft Hv"	},
-		{ BHIVE,	"bhyve"			},
-		{ XEN,		"Xen"			},
-		{ KVM,		"KVM"			},
-		{ QEMU,		"QEMU"			},
-		{ LKVM,		"LKVM"			},
-		{ VMM,		"OpenBSDVMM58"	}
-	};
-
-	CpuID id = getID();
-	if(id == BARE_METAL)
-		return "";
-
-	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
-		if(id == keys[ix].id) {
-			return keys[ix].name;
-		}
-	}
-
-	return "Unknown";
-}
-
-std::string VirtualMachine::name() const {
-	return virtual_machine_name();
-}
-
-#else // !i386, !x86_64
-
-VirtualMachine::operator bool() const {
-	return false;
-}
-
-std::string VirtualMachine::name() const {
-	return "";
-}
-
-VMDETECT_API const char * virtual_machine_name() {
-	return "";
-}
-
-#endif // !i386, !x86_64
-
+ }
 
 
 
