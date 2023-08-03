@@ -46,8 +46,6 @@ dnl ---------------------------------------------------------------------------
 app_vrs_major=$(echo $VERSION | cut -d. -f1)
 app_vrs_minor=$(echo $VERSION | cut -d. -f2)
 
-AC_ARG_WITH([release], [AS_HELP_STRING([--with-release], [Set release])], [ app_cv_release="$withval" ],[ app_cv_release="0.0" ])
-
 AC_DEFINE_UNQUOTED(PACKAGE_MAJOR_VERSION, $app_vrs_major, [The module major version])
 AC_DEFINE_UNQUOTED(PACKAGE_MINOR_VERSION, $app_vrs_minor, [The module minor version])
 
@@ -84,19 +82,7 @@ case "$host" in
 		AC_SUBST(SONAME,libvmdetect.dll)
 		AC_SUBST(OSNAME,windows)
 		AC_CONFIG_FILES(sdk/windows/static.pc)
-		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
-		
-		# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
-		if test -e "$prefix/include/wmi/wmi.hpp" ; then
-			AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
-			LIBS="$LIBS -l:wmi.dll -lwbemuuid -loleaut32 -lole32 -lwbemuuid -loleaut32 -lole32"
-			CFLAGS="$CFLAGS -I$prefix/include/wmi"
-			CXXFLAGS="$CXXFLAGS -I$prefix/include/wmi"
-			AC_MSG_NOTICE([libwmi++ is available.])
-		else
-			AC_MSG_ERROR([libwmi++ is not available.])
-		fi
-		
+		AC_CONFIG_FILES(sdk/windows/dynamic.pc)		
 		AC_PATH_TOOL([WINDRES], [windres], [no])
 		AC_CONFIG_FILES(src/libvmdetect/os/windows/resources.rc)
 
@@ -126,6 +112,11 @@ AC_PATH_TOOL([DLLTOOL], [dlltool], [dlltool])
 AC_PATH_TOOL([STRIP], [strip], [true])
 
 dnl ---------------------------------------------------------------------------
+dnl Libraries
+dnl ---------------------------------------------------------------------------
+PKG_CHECK_EXISTS
+
+dnl ---------------------------------------------------------------------------
 dnl Check for systemd
 dnl ---------------------------------------------------------------------------
 
@@ -133,6 +124,34 @@ PKG_CHECK_MODULES( [SYSTEMD], [libsystemd], AC_DEFINE(HAVE_SYSTEMD,[],[Do we hav
 AC_SUBST(SYSTEMD_CFLAGS)
 AC_SUBST(SYSTEMD_LIBS)
 
+dnl ---------------------------------------------------------------------------
+dnl Check for wmi++
+dnl ---------------------------------------------------------------------------
+
+case "$host" in
+	*-mingw32)
+		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available from pkg-config]), AC_MSG_NOTICE([libwmi++ is not available.]) )
+		;;
+
+	*-pc-msys)
+		# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
+		if test -e "$prefix/include/wmi/wmi.hpp" ; then
+			AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
+			WMI_LIBS="-l:wmi.dll -lwbemuuid -loleaut32 -lole32 -lwbemuuid -loleaut32 -lole32"
+			WMI_CFLAGS="-I$prefix/include/wmi"
+			AC_MSG_NOTICE([libwmi++ is available.])
+		else
+			AC_MSG_ERROR([libwmi++ is not available.])
+		fi	
+		;;
+		
+	*)
+		AC_MSG_NOTICE([libwmi++ is not available.])
+		
+esac
+
+AC_SUBST(WMI_CFLAGS)
+AC_SUBST(WMI_LIBS)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for doxygen
@@ -244,26 +263,12 @@ if test "$app_cv_pic" == "yes"; then
 fi
 
 dnl ---------------------------------------------------------------------------
-dnl Libraries
-dnl ---------------------------------------------------------------------------
-PKG_CHECK_EXISTS
-
-dnl ---------------------------------------------------------------------------
-dnl Output config
-dnl ---------------------------------------------------------------------------
-
-AC_SUBST(BASEDIR,$ac_pwd)
-
-dnl ---------------------------------------------------------------------------
 dnl Configure which files to generate.
 dnl ---------------------------------------------------------------------------
 
 dnl AC_CONFIG_FILES(doxygen/doxyfile)
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(vmdetect.pc)
-dnl AC_CONFIG_FILES(debian/vmdetect.dsc)
-dnl AC_CONFIG_FILES(debian/control)
-dnl AC_CONFIG_FILES(debian/changelog)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.

@@ -15,18 +15,32 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#---[ Paths ]----------------------------------------------------------------------------
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+srcdir=@srcdir@
+bindir=@bindir@
+sbindir=@sbindir@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+localedir=@localedir@
+docdir=@docdir@
+sysconfdir=/etc
+
 #---[ Library configuration ]------------------------------------------------------------
 
 PACKAGE_NAME=@PACKAGE_NAME@
 SONAME=@SONAME@
 
 LIBRARY_SOURCES= \
-	$(wildcard src/libvmdetect/*.cc) \
-	$(wildcard src/libvmdetect/os/@OSNAME@/*.cc) \
-	$(wildcard src/libvmdetect/os/@OSNAME@/*.rc)
+	$(wildcard $(srcdir)/src/libvmdetect/*.cc) \
+	$(wildcard $(srcdir)/src/libvmdetect/os/@OSNAME@/*.cc) \
+	$(wildcard $(srcdir)/src/libvmdetect/os/@OSNAME@/*.rc)
 
 APPLICATION_SOURCES= \
-	$(wildcard src/vmdetect/*.cc)
+	$(wildcard $(srcdir)/src/vmdetect/*.cc)
 
 #---[ Tools ]----------------------------------------------------------------------------
 
@@ -45,27 +59,13 @@ VALGRIND=@VALGRIND@
 DLLTOOL=@DLLTOOL@
 STRIP=@STRIP@
 
-#---[ Paths ]----------------------------------------------------------------------------
-
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-bindir=@bindir@
-sbindir=@sbindir@
-libdir=@libdir@
-includedir=@includedir@
-datarootdir=@datarootdir@
-localedir=@localedir@
-docdir=@docdir@
-sysconfdir=/etc
-
-BASEDIR=@BASEDIR@
 DLL_LDFLAGS=@DLL_LDFLAGS@
 
 OBJDIR=.obj
 OBJDBG=$(OBJDIR)/Debug
 OBJRLS=$(OBJDIR)/Release
 
-BINDIR=$(BASEDIR)/.bin
+BINDIR=.bin
 BINDBG=$(BINDIR)/Debug
 BINRLS=$(BINDIR)/Release
 
@@ -77,15 +77,18 @@ DEPENDS= \
 CFLAGS= \
 	@CXXFLAGS@ \
 	-Isrc/include \
+	-DHAVE_CONFIG_H=1 \
 	-DBUILD_DATE=`date +%Y%m%d` \
-	@SYSTEMD_CFLAGS@ 
+	@SYSTEMD_CFLAGS@ \
+	@WMI_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
 
 LIBS= \
 	@LIBS@ \
-	@SYSTEMD_LIBS@
+	@SYSTEMD_LIBS@ \
+	@WMI_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

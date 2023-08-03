@@ -39,7 +39,10 @@
  *
  */
 
-#include <config.h>
+#ifdef HAVE_CONFIG_H
+	#include <config.h>
+#endif // HAVE_CONFIG_H
+
 #include <stdexcept>
 #include <vmdetect/virtualmachine.h>
 #include <cstring>
@@ -140,7 +143,6 @@ static CpuID getID() {
 		}
 	}
 
-#ifdef _WIN32
 	if(rc == VPC) {
 		//
 		// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
@@ -191,7 +193,6 @@ static CpuID getID() {
 #endif // HAVE_WMI
 
 	}
-#endif // _WIN32
 
 	return rc;
 
