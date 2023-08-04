@@ -59,10 +59,8 @@
 
  #endif // _MSC_VER
 
- #ifdef HAVE_WMI
-	#include <wmi.hpp>
-	#include <wmiclasses.hpp>
- #endif // HAVE_WMI
+ #include <wmi.hpp>
+ #include <wmiclasses.hpp>
 
  using namespace std;
 
@@ -89,14 +87,12 @@
 	if(cpuid == BARE_METAL)
 		return "";
 
-#ifdef HAVE_WMI
-	{
+	if(cpuid == VPC) {
 		auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
 		if(!computer.Vendor.empty()) {
 			return computer.Vendor;
 		}
 	}
-#endif // HAVE_WMI
 
 	if(cpuid != UNKNOWN) {
 		for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
