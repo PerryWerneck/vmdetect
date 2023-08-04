@@ -13,7 +13,8 @@ jobs:
     name: Publish MSVC 64
     steps:
       - uses: actions/checkout@v3
-		submodules: true
+        with:
+          submodules: true
       - uses: oprypin/find-latest-tag@v1
         id: gettag
         with:
