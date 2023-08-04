@@ -82,13 +82,11 @@ CFLAGS= \
 	@SYSTEMD_CFLAGS@ \
 	@WMI_CFLAGS@
 
-LDFLAGS=\
+LDFLAGS= \
 	@LDFLAGS@
 
 LIBS= \
-	@LIBS@ \
-	@SYSTEMD_LIBS@ \
-	@WMI_LIBS@
+	@LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
@@ -181,7 +179,7 @@ $(BINRLS)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		$(LIBS)
+		$(LIBS) @SYSTEMD_LIBS@ @WMI_LIBS@
 
 $(BINRLS)/lib$(PACKAGE_NAME).a: \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
@@ -333,8 +331,7 @@ $(BINDBG)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		$(LIBS)
-
+		@SYSTEMD_LIBS@ @WMI_LIBS@
 
 run: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@

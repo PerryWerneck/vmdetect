@@ -44,6 +44,7 @@
  #include <cstring>
  #include <string>
  #include <stdint.h>
+ #include <iostream>
 
  #ifdef HAVE_WMI
 	#include <wmi.hpp>
@@ -100,8 +101,20 @@
 
 	VirtualMachine::CpuID VirtualMachine::id() const {
 
-		#error Incomplete
+		// https://stackoverflow.com/questions/498371/how-to-detect-if-my-application-is-running-in-a-virtual-machine
+		// https://stackoverflow.com/questions/21642347/cpu-id-using-c-windows
 
+		int regs[4] = {0};
+		char vendor[13];
+		__cpuid(regs, 0);              // mov eax,0; cpuid
+		memcpy(vendor, &regs[1], 4);   // copy EBX
+		memcpy(vendor+4, &regs[3], 4); // copy EDX
+		memcpy(vendor+8, &regs[2], 4); // copy ECX
+		vendor[12] = '\0';
+		
+		printf("My CPU is a %s\n", vendor);
+
+		throw runtime_error("Incomplete");
 	}
 
  #else
