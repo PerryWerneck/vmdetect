@@ -139,7 +139,7 @@ else
 	# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
 	if test -e "$prefix/include/wmi/wmi.hpp" ; then
 		AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
-		WMI_LIBS="-l:wmi.static.a -lwbemuuid -loleaut32 -lole32 -lwbemuuid -loleaut32 -lole32"
+		WMI_LIBS="-l:wmi.static.a -lwbemuuid -loleaut32 -lole32"
 		WMI_CFLAGS="-I$prefix/include/wmi"
 		AC_MSG_NOTICE([libwmi++ is available from system path.])
 	fi	

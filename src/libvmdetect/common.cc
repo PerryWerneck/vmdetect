@@ -21,6 +21,7 @@
 	#include <config.h>
  #endif // HAVE_CONFIG_H
 
+ #include <iostream>
  #include <vmdetect/virtualmachine.h>
  #include <cstring>
 

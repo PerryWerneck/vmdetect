@@ -38,13 +38,26 @@
  *
  */
 
- #include <config.h>
+ #ifdef HAVE_CONFIG_H
+ 	#include <config.h>
+ #endif // HAVE_CONFIG_H
+
  #include <stdexcept>
  #include <vmdetect/virtualmachine.h>
  #include <cstring>
  #include <string>
  #include <stdint.h>
  #include <iostream>
+
+ #ifdef _MSC_VER
+ 
+	#include <intrin.h>
+
+	#pragma comment(lib, "wbemuuid.lib")
+	#pragma comment(lib, "oleaut32")
+	#pragma comment(lib, "ole32")
+
+ #endif // _MSC_VER
 
  #ifdef HAVE_WMI
 	#include <wmi.hpp>
@@ -97,116 +110,131 @@
 
  }
 
- #ifdef _MSC_VER
 
-	VirtualMachine::CpuID VirtualMachine::id() const {
+ /*
+ // https://stackoverflow.com/questions/1666093/cpuid-implementations-in-c
+ // http://git.annexia.org/?p=virt-what.git;a=tree
+ static unsigned int cpuid(unsigned int eax, char *sig) {
 
-		// https://stackoverflow.com/questions/498371/how-to-detect-if-my-application-is-running-in-a-virtual-machine
-		// https://stackoverflow.com/questions/21642347/cpu-id-using-c-windows
+	uint32_t *sig32 = (uint32_t *) sig;
 
-		int regs[4] = {0};
-		char vendor[13];
-		__cpuid(regs, 0);              // mov eax,0; cpuid
-		memcpy(vendor, &regs[1], 4);   // copy EBX
-		memcpy(vendor+4, &regs[3], 4); // copy EDX
-		memcpy(vendor+8, &regs[2], 4); // copy ECX
-		vendor[12] = '\0';
-		
-		printf("My CPU is a %s\n", vendor);
+	asm volatile (
+		"xchgl %%ebx,%1; xor %%ebx,%%ebx; cpuid; xchgl %%ebx,%1"
+		: "=a" (eax), "+r" (sig32[0]), "=c" (sig32[1]), "=d" (sig32[2])
+		: "0" (eax)
+	);
+	sig[12] = 0;
 
-		throw runtime_error("Incomplete");
+	return eax;
+
+ }
+ */
+
+ static int cpuid(unsigned int i, char sig[13]) {
+
+	// https://stackoverflow.com/questions/1666093/cpuid-implementations-in-c
+
+	uint32_t regs[4];
+	memset(sig,0,sizeof(sig));
+
+#ifdef _MSC_VER
+
+	__cpuid((int *)regs, (int)i);
+
+#else
+
+	asm volatile
+      ("cpuid" : "=a" (regs[0]), "=b" (regs[1]), "=c" (regs[2]), "=d" (regs[3])
+       : "a" (i), "c" (0));
+   // ECX is set to zero for CPUID function 4
+
+#endif // _MSC_VER
+
+	uint32_t *ptr = (uint32_t *) sig;
+
+	*(ptr++) = regs[1];	// EBX
+	*(ptr++) = regs[2];	// EDX
+	*(ptr++) = regs[3];	// ECX
+	sig[12] = 0;
+
+	return regs[0];
+ }
+
+ VirtualMachine::CpuID VirtualMachine::id() const {
+
+	CpuID rc = BARE_METAL;
+	char sig[13];
+
+	unsigned int base = 0x40000000, leaf = base;
+	unsigned int max_entries;
+
+	max_entries = cpuid (leaf, sig);
+	rc = translate(sig);
+
+	//
+	// Most hypervisors only have information in leaf 0x40000000, but
+	// upstream Xen contains further leaf entries (in particular when
+	// used with Viridian [HyperV] extensions).  CPUID is supposed to
+	// return the maximum leaf offset in %eax, so that's what we use,
+	// but only if it looks sensible.
+	//
+	if (rc == BARE_METAL && max_entries > 3 && max_entries < 0x10000) {
+		for (leaf = base + 0x100; leaf <= base + max_entries && rc == BARE_METAL; leaf += 0x100) {
+			memset (sig, 0, sizeof sig);
+			cpuid (leaf, sig);
+			rc = translate(sig);
+		}
 	}
 
- #else
-
-	// http://git.annexia.org/?p=virt-what.git;a=tree
-	static unsigned int cpuid(unsigned int eax, char *sig) {
-
-		unsigned int *sig32 = (unsigned int *) sig;
-
-		asm volatile (
-			"xchgl %%ebx,%1; xor %%ebx,%%ebx; cpuid; xchgl %%ebx,%1"
-			: "=a" (eax), "+r" (sig32[0]), "=c" (sig32[1]), "=d" (sig32[2])
-			: "0" (eax)
-		);
-		sig[12] = 0;
-
-		return eax;
-
-	}
-
-	VirtualMachine::CpuID VirtualMachine::id() const {
-
-		CpuID rc = BARE_METAL;
-		char sig[13];
-
-		unsigned int base = 0x40000000, leaf = base;
-		unsigned int max_entries;
-
-		memset (sig, 0, sizeof sig);
-		max_entries = cpuid (leaf, sig);
-		rc = translate(sig);
-
-		//
-		// Most hypervisors only have information in leaf 0x40000000, but
-		// upstream Xen contains further leaf entries (in particular when
-		// used with Viridian [HyperV] extensions).  CPUID is supposed to
-		// return the maximum leaf offset in %eax, so that's what we use,
-		// but only if it looks sensible.
-		//
-		if (rc == BARE_METAL && max_entries > 3 && max_entries < 0x10000) {
-			for (leaf = base + 0x100; leaf <= base + max_entries && rc == BARE_METAL; leaf += 0x100) {
-				memset (sig, 0, sizeof sig);
-				cpuid (leaf, sig);
-				rc = translate(sig);
-			}
-		}
-
-		if(rc == VPC) {
-			//
-			// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
-			// https://www.splunk.com/en_us/blog/tips-and-tricks/detecting-your-hypervisor-from-within-a-windows-guest-os.html
-			//
-			static const struct {
-				CpuID		  id;
-				const char	* name;
-			} Manufacturers[] = {
-				{ QEMU,		"QEMU" 					},
-				{ XEN,		"XEN"					},
-				{ VMWARE,	"VMWARE"				},
-				{ VPC,	 	"MICROSOFT HYPER-V"		}
-			};
-
-		#ifdef HAVE_WMI
-			{
-				auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
-
-				if(!computer.Vendor.empty()) {
-
-					rc = BARE_METAL;
-
-					for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
-						computer.Vendor[ix] = toupper(computer.Vendor[ix]);
-					}
-
-					for(size_t ix = 0; ix < (sizeof(Manufacturers)/sizeof(Manufacturers[0])); ix++) {
-						if(strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
-							rc = Manufacturers[ix].id;
-							break;
-						}
-					}
-
-				}
-			}
-		#endif // HAVE_WMI
-
-		}
-
+	if(rc == BARE_METAL) {
 		return rc;
-
 	}
 
- #endif // _MSC_VER
+	// https://stackoverflow.com/questions/498371/how-to-detect-if-my-application-is-running-in-a-virtual-machine
+
+	#ifdef HAVE_WMI
+	if(rc == VPC) {
+		//
+		// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
+		// https://www.splunk.com/en_us/blog/tips-and-tricks/detecting-your-hypervisor-from-within-a-windows-guest-os.html
+		//
+		static const struct {
+			CpuID		  id;
+			const char	* name;
+		} Manufacturers[] = {
+			{ QEMU,		"QEMU" 					},
+			{ XEN,		"XEN"					},
+			{ VMWARE,	"VMWARE"				},
+			{ VPC,	 	"MICROSOFT HYPER-V"		}
+		};
+
+		{
+			auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
+
+			if(!computer.Vendor.empty()) {
+
+				rc = BARE_METAL;
+
+				for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
+					computer.Vendor[ix] = toupper(computer.Vendor[ix]);
+				}
+
+				for(size_t ix = 0; ix < (sizeof(Manufacturers)/sizeof(Manufacturers[0])); ix++) {
+					if(strstr(computer.Vendor.c_str(),Manufacturers[ix].name)) {
+						rc = Manufacturers[ix].id;
+						break;
+					}
+				}
+
+			}
+		}
+
+	}
+	#endif // HAVE_WMI
+
+	return rc;
+
+}
 
 
 
