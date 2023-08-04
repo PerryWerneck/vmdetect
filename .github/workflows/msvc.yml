@@ -1,4 +1,4 @@
-name: Publish
+name: PublishMSVC
 on:   
   push:
     branches:
@@ -21,8 +21,8 @@ jobs:
       - uses: ilammy/msvc-dev-cmd@v1.4.1
       - name: pack
         run: |
-          7z a msvc-vmdetect.zip .\bin\* .\lib\* .\src\include\vmdetect
           nmake /f win\Makefile.msc
+          7z a msvc-vmdetect.zip .\bin\* .\lib\* .\src\include\vmdetect
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
