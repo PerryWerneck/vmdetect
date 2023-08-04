@@ -1,0 +1,35 @@
+name: Publish
+on:   
+  push:
+    branches:
+      - develop      
+  pull_request:
+    branches:
+      - master
+      - develop      
+jobs:
+  msvc-pack:
+    runs-on: windows-latest
+    name: Publish MSVC 64
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+        run: nmake /f win\Makefile.msc
+      - name: pack
+        run: 7z a msvc-vmdetect.zip .\bin\* .\lib\* .\src\include\vmdetect
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.gettag.outputs.tag }}
+          artifacts: "*vmdetect*.zip"
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          omitBody: true
+          omitPrereleaseDuringUpdate: true
+          replacesArtifacts: true
+
