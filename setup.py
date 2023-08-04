@@ -6,7 +6,7 @@ import platform
 import os
 import glob
 
-include_dirs = ['src/include']
+include_dirs = ['src/include','src/libvmdetect/os/windows/wmi/include']
 library_dirs = []
 extra_link_args = []
 library_names = [ ]
@@ -28,8 +28,14 @@ for filename in glob.glob("src/python/*.c"):
 	src_files.append(filename)
 
 if platform.system() == 'Windows':
-	
+
 	for filename in glob.glob("src/libvmdetect/os/windows/*.cc"):
+		src_files.append(filename)
+
+	for filename in glob.glob("src/libvmdetect/os/windows/wmi/src/*.cpp"):
+		src_files.append(filename)
+
+	for filename in glob.glob("src/libvmdetect/os/windows/wmi/diaa_sami_comsupp/*.cpp"):
 		src_files.append(filename)
 
 else:
@@ -56,7 +62,7 @@ with open(r'configure.ac', 'r') as fp:
             package_version = line.split('[')[2].split(']')[0].strip()
             break;
             
-setup ( name = 'smbios',
+setup ( name = 'virtualmachine',
 	version = package_version,
 	description = 'Python library to identify virtual machine.',
 	author = 'Perry Werneck',
@@ -65,5 +71,5 @@ setup ( name = 'smbios',
 	long_description = '''
 This is an extension to identify virtual machine on python applications.
 ''',
-	ext_modules = [ smbios ])
+	ext_modules = [ virtualmachine ])
 
