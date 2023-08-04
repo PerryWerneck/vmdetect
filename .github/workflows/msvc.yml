@@ -2,7 +2,7 @@ name: Publish
 on:   
   push:
     branches:
-      - develop      
+      - msvc      
   pull_request:
     branches:
       - master
@@ -19,9 +19,10 @@ jobs:
           repository: PerryWerneck/vmdetect
           releases-only: true
       - uses: ilammy/msvc-dev-cmd@v1.4.1
-        run: nmake /f win\Makefile.msc
       - name: pack
-        run: 7z a msvc-vmdetect.zip .\bin\* .\lib\* .\src\include\vmdetect
+        run: |
+          7z a msvc-vmdetect.zip .\bin\* .\lib\* .\src\include\vmdetect
+          nmake /f win\Makefile.msc
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
