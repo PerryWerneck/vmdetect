@@ -44,4 +44,34 @@ jobs:
           omitBody: true
           omitPrereleaseDuringUpdate: true
           replacesArtifacts: true
+  msvc-pack:
+    runs-on: windows-latest
+    name: Publish MSVC 64
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+      - name: pack
+        run: |
+          nmake /f win\Makefile.msc
+          mkdir include
+          mkdir include\vmdetect
+          xcopy /s src\include\vmdetect include\vmdetect
+          7z a msvc-vmdetect-${{ steps.gettag.outputs.tag }}.zip .\bin .\lib .\include
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.gettag.outputs.tag }}
+          artifacts: "*vmdetect*.zip"
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          omitBody: true
+          omitPrereleaseDuringUpdate: true
+          replacesArtifacts: true
 

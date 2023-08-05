@@ -3,10 +3,6 @@ on:
   push:
     branches:
       - msvc      
-  pull_request:
-    branches:
-      - master
-      - develop      
 jobs:
   msvc-pack:
     runs-on: windows-latest
