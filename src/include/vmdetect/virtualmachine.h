@@ -24,6 +24,7 @@
  #ifdef __cplusplus
 
  #include <string>
+ #include <cstdint>
 
  extern "C" {
 
