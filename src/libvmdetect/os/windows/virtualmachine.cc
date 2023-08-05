@@ -50,7 +50,7 @@
  #include <iostream>
 
  #ifdef _MSC_VER
- 
+
 	#include <intrin.h>
 
 	#pragma comment(lib, "wbemuuid.lib")
@@ -131,7 +131,7 @@
 	// https://stackoverflow.com/questions/1666093/cpuid-implementations-in-c
 
 	uint32_t regs[4];
-	memset(sig,0,sizeof(sig));
+	memset(sig,0,13);
 
 #ifdef _MSC_VER
 
