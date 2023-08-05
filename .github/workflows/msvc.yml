@@ -1,4 +1,4 @@
-name: Publish
+name: PublishMSVC
 on:   
   push:
     branches:
@@ -13,6 +13,8 @@ jobs:
     name: Publish MSVC 64
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
       - uses: oprypin/find-latest-tag@v1
         id: gettag
         with:
@@ -22,7 +24,10 @@ jobs:
       - name: pack
         run: |
           nmake /f win\Makefile.msc
-          7z a msvc-vmdetect.zip .\bin\* .\lib\* .\src\include\vmdetect
+          mkdir include
+          mkdir include\vmdetect
+          xcopy /s src\include\vmdetect include\vmdetect
+          7z a msvc-vmdetect-${{ steps.gettag.outputs.tag }}.zip .\bin .\lib .\include
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
