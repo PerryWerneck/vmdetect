@@ -34,7 +34,7 @@ jobs:
         run: |
           pacman -U --noconfirm *.pkg.tar.zst
           dos2unix PKGBUILD.mingw
-          makepkg -p PKGBUILD.mingw
+          makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
