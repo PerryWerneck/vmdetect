@@ -9,8 +9,8 @@ source=()
 #  grep AC_INIT ${startdir}/configure.ac | cut -d[ -f3 | cut -d] -f1
 #}
 
-pkgver=1.0
-pkgrel=1
+pkgver=1.1
+pkgrel=0
 pkgdesc="Get DMI information using URL format"
 url="https://github.com/PerryWerneck/dmiget"
 arch=(i686 x86_64)
@@ -29,9 +29,6 @@ prepare() {
 }
 
 build() {
-  echo "---"
-  echo ${PWD}
-  ls -l
   cd .build
   ./autogen.sh \
     --prefix=${MINGW_PREFIX} \

@@ -33,7 +33,8 @@ jobs:
       - name: CI-Build
         run: |
           pacman -U --noconfirm *.pkg.tar.zst
-          ./win/ci-build.sh
+          dos2unix PKGBUILD.mingw
+          makepkg -p PKGBUILD.mingw
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
