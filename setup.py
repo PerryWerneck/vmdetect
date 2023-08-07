@@ -6,7 +6,7 @@ import platform
 import os
 import glob
 
-include_dirs = ['src/include','src/libvmdetect/os/windows/wmi/include']
+include_dirs = ['src/include']
 library_dirs = []
 extra_link_args = []
 library_names = [ ]
@@ -29,6 +29,8 @@ for filename in glob.glob("src/python/*.c"):
 
 if platform.system() == 'Windows':
 
+	include_dirs.append('src/libvmdetect/os/windows/wmi/include')
+	
 	for filename in glob.glob("src/libvmdetect/os/windows/*.cc"):
 		src_files.append(filename)
 
@@ -45,7 +47,7 @@ else:
 	for filename in glob.glob("src/libvmdetect/os/linux/*.cc"):
 		src_files.append(filename)
 
-smbios = Extension(
+virtualmachine = Extension(
 		'virtualmachine',
 		include_dirs = include_dirs,
 		libraries = library_names,
