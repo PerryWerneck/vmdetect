@@ -37,8 +37,8 @@ if platform.system() == 'Windows':
 	for filename in glob.glob("src/libvmdetect/os/windows/wmi/src/*.cpp"):
 		src_files.append(filename)
 
-	for filename in glob.glob("src/libvmdetect/os/windows/wmi/diaa_sami_comsupp/*.cpp"):
-		src_files.append(filename)
+#	for filename in glob.glob("src/libvmdetect/os/windows/wmi/diaa_sami_comsupp/*.cpp"):
+#		src_files.append(filename)
 
 else:
 

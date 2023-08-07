@@ -27,6 +27,8 @@
 
  #include <vmdetect/defs.h>
  #include <private/python.h>
+ #include <iostream>
+ #include <string>
 
  PyObject * call(PyObject *self, const std::function<PyObject * ()> &worker) {
 
