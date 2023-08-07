@@ -50,11 +50,11 @@
 	operator bool() const;
 	std::string name() const;
 
-#ifndef _WIN32
+ #ifndef _MSC_VER
 	inline std::string to_string() const {
 		return name();
 	}
-#endif // !_WIN32
+ #endif // !_MSC_VER
 
 	static const VirtualMachine & getInstance();
 
