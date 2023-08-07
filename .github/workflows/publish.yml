@@ -75,4 +75,28 @@ jobs:
           omitBody: true
           omitPrereleaseDuringUpdate: true
           replacesArtifacts: true
+  py-win32:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true  # We know that all relevant tags have a GitHub release for them.
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Build installer
+        run: python setup.py bdist_wininst
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.gettag.outputs.tag }}
+          artifacts: "dist/*.exe"
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          omitBody: true
+          omitPrereleaseDuringUpdate: true
+          replacesArtifacts: true
 
