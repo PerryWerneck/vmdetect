@@ -50,6 +50,12 @@
 	operator bool() const;
 	std::string name() const;
 
+#ifndef _WIN32
+	inline std::string to_string() const {
+		return name();
+	}
+#endif // !_WIN32
+
 	static const VirtualMachine & getInstance();
 
  private:
