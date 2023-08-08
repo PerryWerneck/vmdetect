@@ -15,6 +15,9 @@
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
+/* Do we have python3? */
+#undef HAVE_PYTHON3
+
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
@@ -39,7 +42,7 @@
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Do we have wmi++? */
+/* libwmi++ is available */
 #undef HAVE_WMI
 
 /* Define as const if the declaration of iconv() needs const. */
@@ -83,6 +86,12 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
+
+/* The python sitelib */
+#undef PYTHON_SITELIB
+
+/* The python version */
+#undef PYTHON_VERSION
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS

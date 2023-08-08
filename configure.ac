@@ -46,8 +46,6 @@ dnl ---------------------------------------------------------------------------
 app_vrs_major=$(echo $VERSION | cut -d. -f1)
 app_vrs_minor=$(echo $VERSION | cut -d. -f2)
 
-AC_ARG_WITH([release], [AS_HELP_STRING([--with-release], [Set release])], [ app_cv_release="$withval" ],[ app_cv_release="0.0" ])
-
 AC_DEFINE_UNQUOTED(PACKAGE_MAJOR_VERSION, $app_vrs_major, [The module major version])
 AC_DEFINE_UNQUOTED(PACKAGE_MINOR_VERSION, $app_vrs_minor, [The module minor version])
 
@@ -84,10 +82,7 @@ case "$host" in
 		AC_SUBST(SONAME,libvmdetect.dll)
 		AC_SUBST(OSNAME,windows)
 		AC_CONFIG_FILES(sdk/windows/static.pc)
-		AC_CONFIG_FILES(sdk/windows/dynamic.pc)
-		
-		PKG_CHECK_MODULES( [WMI], [wmi++], AC_DEFINE(HAVE_WMI,[],[Do we have wmi++?]), AC_MSG_ERROR([libwmi++ not present.]) )		
-		
+		AC_CONFIG_FILES(sdk/windows/dynamic.pc)		
 		AC_PATH_TOOL([WINDRES], [windres], [no])
 		AC_CONFIG_FILES(src/libvmdetect/os/windows/resources.rc)
 
@@ -117,6 +112,11 @@ AC_PATH_TOOL([DLLTOOL], [dlltool], [dlltool])
 AC_PATH_TOOL([STRIP], [strip], [true])
 
 dnl ---------------------------------------------------------------------------
+dnl Libraries
+dnl ---------------------------------------------------------------------------
+PKG_CHECK_EXISTS
+
+dnl ---------------------------------------------------------------------------
 dnl Check for systemd
 dnl ---------------------------------------------------------------------------
 
@@ -124,6 +124,30 @@ PKG_CHECK_MODULES( [SYSTEMD], [libsystemd], AC_DEFINE(HAVE_SYSTEMD,[],[Do we hav
 AC_SUBST(SYSTEMD_CFLAGS)
 AC_SUBST(SYSTEMD_LIBS)
 
+dnl ---------------------------------------------------------------------------
+dnl Check for wmi++
+dnl ---------------------------------------------------------------------------
+
+PKG_CHECK_MODULES( [WMI], [wmi++], app_cv_wmi="yes", app_cv_wmi="no" )
+
+if test "$app_cv_wmi" == "yes"; then
+
+	AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available from pkg-config])
+
+else
+
+	# /usr/x86_64-w64-mingw32/sys-root/mingw/include/wmi/wmi.hpp
+	if test -e "$prefix/include/wmi/wmi.hpp" ; then
+		AC_DEFINE(HAVE_WMI, 1, [libwmi++ is available])
+		WMI_LIBS="-l:wmi.static.a -lwbemuuid -loleaut32 -lole32"
+		WMI_CFLAGS="-I$prefix/include/wmi"
+		AC_MSG_NOTICE([libwmi++ is available from system path.])
+	fi	
+
+fi
+
+AC_SUBST(WMI_CFLAGS)
+AC_SUBST(WMI_LIBS)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for doxygen
@@ -235,15 +259,37 @@ if test "$app_cv_pic" == "yes"; then
 fi
 
 dnl ---------------------------------------------------------------------------
-dnl Libraries
-dnl ---------------------------------------------------------------------------
-PKG_CHECK_EXISTS
-
-dnl ---------------------------------------------------------------------------
-dnl Output config
+dnl Check for Python
 dnl ---------------------------------------------------------------------------
 
-AC_SUBST(BASEDIR,$ac_pwd)
+PKG_CHECK_MODULES( [PYTHON], [python3], app_cv_python="yes", AC_MSG_NOTICE([Python devel is unavailable]))
+
+if test "$app_cv_python" == "yes"; then
+
+	case "$host" in
+		*-mingw32)
+			BUILD_TARGETS="${BUILD_TARGETS} virtualmachine.dll"
+			;;
+
+	 	*)
+			BUILD_TARGETS="${BUILD_TARGETS} virtualmachine.so"
+
+	esac
+
+	AC_DEFINE(HAVE_PYTHON3,1,[ Do we have python3? ])
+
+	AC_SUBST(PYTHON_LIBS)
+	AC_SUBST(PYTHON_CFLAGS)
+
+	AC_ARG_WITH([python-sitelib], [AS_HELP_STRING([--with-python-sitelib], [Set python-sitelib])], [ app_cv_python_sitelib="$withval" ],[ app_cv_python_sitelib=`python3 -c 'import site; print(site.getsitepackages().pop(0))'` ])
+	AC_DEFINE_UNQUOTED(PYTHON_SITELIB, $app_cv_python_sitelib,[ The python sitelib ])
+	AC_SUBST(PYTHON_SITELIB,$app_cv_python_sitelib)
+
+	AC_ARG_WITH([python-version], [AS_HELP_STRING([--with-python-version], [Set Python Version])], [ app_cv_python_version="$withval" ],[ app_cv_python_version=`$PKG_CONFIG --modversion python3` ])
+	AC_DEFINE_UNQUOTED(PYTHON_VERSION, $app_cv_python_version,[ The python version])
+	AC_SUBST(PYTHON_VERSION,$app_cv_python_version)
+
+fi
 
 dnl ---------------------------------------------------------------------------
 dnl Configure which files to generate.
@@ -252,9 +298,6 @@ dnl ---------------------------------------------------------------------------
 dnl AC_CONFIG_FILES(doxygen/doxyfile)
 AC_CONFIG_FILES(Makefile)
 AC_CONFIG_FILES(vmdetect.pc)
-dnl AC_CONFIG_FILES(debian/vmdetect.dsc)
-dnl AC_CONFIG_FILES(debian/control)
-dnl AC_CONFIG_FILES(debian/changelog)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.

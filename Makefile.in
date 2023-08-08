@@ -1,3 +1,33 @@
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+# Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+#---[ Paths ]----------------------------------------------------------------------------
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+srcdir=@srcdir@
+bindir=@bindir@
+sbindir=@sbindir@
+libdir=@libdir@
+includedir=@includedir@
+datarootdir=@datarootdir@
+localedir=@localedir@
+docdir=@docdir@
+sysconfdir=/etc
 
 #---[ Library configuration ]------------------------------------------------------------
 
@@ -5,12 +35,12 @@ PACKAGE_NAME=@PACKAGE_NAME@
 SONAME=@SONAME@
 
 LIBRARY_SOURCES= \
-	$(wildcard src/libvmdetect/*.cc) \
-	$(wildcard src/libvmdetect/os/@OSNAME@/*.cc) \
-	$(wildcard src/libvmdetect/os/@OSNAME@/*.rc)
+	$(wildcard $(srcdir)/src/libvmdetect/*.cc) \
+	$(wildcard $(srcdir)/src/libvmdetect/os/@OSNAME@/*.cc) \
+	$(wildcard $(srcdir)/src/libvmdetect/os/@OSNAME@/*.rc)
 
 APPLICATION_SOURCES= \
-	$(wildcard src/vmdetect/*.cc)
+	$(wildcard $(srcdir)/src/vmdetect/*.cc)
 
 #---[ Tools ]----------------------------------------------------------------------------
 
@@ -29,27 +59,13 @@ VALGRIND=@VALGRIND@
 DLLTOOL=@DLLTOOL@
 STRIP=@STRIP@
 
-#---[ Paths ]----------------------------------------------------------------------------
-
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-bindir=@bindir@
-sbindir=@sbindir@
-libdir=@libdir@
-includedir=@includedir@
-datarootdir=@datarootdir@
-localedir=@localedir@
-docdir=@docdir@
-sysconfdir=/etc
-
-BASEDIR=@BASEDIR@
 DLL_LDFLAGS=@DLL_LDFLAGS@
 
 OBJDIR=.obj
 OBJDBG=$(OBJDIR)/Debug
 OBJRLS=$(OBJDIR)/Release
 
-BINDIR=$(BASEDIR)/.bin
+BINDIR=.bin
 BINDBG=$(BINDIR)/Debug
 BINRLS=$(BINDIR)/Release
 
@@ -61,17 +77,16 @@ DEPENDS= \
 CFLAGS= \
 	@CXXFLAGS@ \
 	-Isrc/include \
+	-DHAVE_CONFIG_H=1 \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@SYSTEMD_CFLAGS@ \
 	@WMI_CFLAGS@
 
-LDFLAGS=\
+LDFLAGS= \
 	@LDFLAGS@
 
 LIBS= \
-	@LIBS@ \
-	@SYSTEMD_LIBS@ \
-	@WMI_LIBS@
+	@LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
@@ -164,7 +179,7 @@ $(BINRLS)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		$(LIBS)
+		$(LIBS) @SYSTEMD_LIBS@ @WMI_LIBS@
 
 $(BINRLS)/lib$(PACKAGE_NAME).a: \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
@@ -316,8 +331,7 @@ $(BINDBG)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		$(LIBS)
-
+		@SYSTEMD_LIBS@ @WMI_LIBS@
 
 run: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@

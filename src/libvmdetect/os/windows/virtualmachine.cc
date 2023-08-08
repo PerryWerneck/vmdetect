@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
 /**
  * @file virtualmachine.cc
  *
@@ -39,43 +38,81 @@
  *
  */
 
-#include <config.h>
-#include <stdexcept>
-#include <vmdetect/virtualmachine.h>
-#include <cstring>
-#include <string>
-#include <iostream>
-#include <cstdlib>
+ #ifdef HAVE_CONFIG_H
+ 	#include <config.h>
+ #endif // HAVE_CONFIG_H
 
-#ifdef HAVE_WMI
-	#include <wmi.hpp>
-	#include <wmiclasses.hpp>
-#endif // HAVE_WMI
+ #include <stdexcept>
+ #include <vmdetect/virtualmachine.h>
+ #include <cstring>
+ #include <string>
+ #include <stdint.h>
+ #include <iostream>
 
-using namespace std;
+ #ifdef _MSC_VER
+
+	#include <intrin.h>
+
+	#pragma comment(lib, "wbemuuid.lib")
+	#pragma comment(lib, "oleaut32")
+	#pragma comment(lib, "ole32")
+
+ #endif // _MSC_VER
+
+ #include <wmi.hpp>
+ #include <wmiclasses.hpp>
+
+ using namespace std;
 
 /*---[ Implement ]----------------------------------------------------------------------------------*/
 
-#if defined(__i386__) || defined(__x86_64__)
+ std::string VirtualMachine::name() const {
 
-enum CpuID : uint8_t {
-	BARE_METAL,			///< @brief Running on bare metal
-	VMWARE,				///< @brief Running on VMWare
-	VPC,				///< @brief Running on Virtual PC
-	BHIVE,				///< @brief Running on BHIVE
-	XEN,				///< @brief Running on XEN
-	KVM,				///< @brief Running on KVM
-	QEMU,				///< @brief Running on QEMU
-	LKVM,				///< @brief Running on LKVM
-	VMM,				///< @brief Running on VMM
+	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
+	static const struct Key {
+		CpuID	  	  id;
+		const char	* name;
+	} keys[] = {
+		{ VMWARE,	"VMware"		},
+		{ VPC,		"Microsoft Hv"	},
+		{ BHIVE,	"bhyve"			},
+		{ XEN,		"Xen"			},
+		{ KVM,		"KVM"			},
+		{ QEMU,		"QEMU"			},
+		{ LKVM,		"LKVM"			},
+		{ VMM,		"OpenBSDVMM58"	}
+	};
 
-	UNKNOWN				///< @brief Running on Unknown virtual machine
-};
+	CpuID cpuid = this->id();
+	if(cpuid == BARE_METAL)
+		return "";
 
-// http://git.annexia.org/?p=virt-what.git;a=tree
-static unsigned int cpuid(unsigned int eax, char *sig) {
+	if(cpuid == VPC) {
+		auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
+		if(!computer.Vendor.empty()) {
+			return computer.Vendor;
+		}
+	}
 
-	unsigned int *sig32 = (unsigned int *) sig;
+	if(cpuid != UNKNOWN) {
+		for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
+			if(cpuid == keys[ix].id) {
+				return keys[ix].name;
+			}
+		}
+	}
+
+	return "Unknown";
+
+ }
+
+
+ /*
+ // https://stackoverflow.com/questions/1666093/cpuid-implementations-in-c
+ // http://git.annexia.org/?p=virt-what.git;a=tree
+ static unsigned int cpuid(unsigned int eax, char *sig) {
+
+	uint32_t *sig32 = (uint32_t *) sig;
 
 	asm volatile (
 		"xchgl %%ebx,%1; xor %%ebx,%%ebx; cpuid; xchgl %%ebx,%1"
@@ -86,34 +123,40 @@ static unsigned int cpuid(unsigned int eax, char *sig) {
 
 	return eax;
 
-}
+ }
+ */
 
-static CpuID translate(const char *sig) {
+ static int cpuid(unsigned int i, char sig[13]) {
 
-	static const struct Key {
-		CpuID		  id;
-		const char	* sig;
-	} keys[] = {
-		{ VMWARE,	"VMwareVMware"	},
-		{ VPC,		"Microsoft Hv"	},
-		{ BHIVE,	"bhyve bhyve"	},
-		{ XEN,		"XenVMMXenVMM"	},
-		{ KVM,		"KVMKVMKVM"		},
-		{ QEMU,		"TCGTCGTCGTCG"	},
-		{ LKVM,		"LKVMLKVMLKVM"	},
-		{ VMM,		"OpenBSDVMM58"	}
-	};
+	// https://stackoverflow.com/questions/1666093/cpuid-implementations-in-c
 
-	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
-		if(!strcmp(sig,keys[ix].sig)) {
-			return keys[ix].id;
-		}
-	}
+	uint32_t regs[4];
+	memset(sig,0,13);
 
-	return BARE_METAL;
-}
+#ifdef _MSC_VER
 
-static CpuID getID() {
+	__cpuid((int *)regs, (int)i);
+
+#else
+
+	asm volatile
+      ("cpuid" : "=a" (regs[0]), "=b" (regs[1]), "=c" (regs[2]), "=d" (regs[3])
+       : "a" (i), "c" (0));
+   // ECX is set to zero for CPUID function 4
+
+#endif // _MSC_VER
+
+	uint32_t *ptr = (uint32_t *) sig;
+
+	*(ptr++) = regs[1];	// EBX
+	*(ptr++) = regs[2];	// EDX
+	*(ptr++) = regs[3];	// ECX
+	sig[12] = 0;
+
+	return regs[0];
+ }
+
+ VirtualMachine::CpuID VirtualMachine::id() const {
 
 	CpuID rc = BARE_METAL;
 	char sig[13];
@@ -121,7 +164,6 @@ static CpuID getID() {
 	unsigned int base = 0x40000000, leaf = base;
 	unsigned int max_entries;
 
-	memset (sig, 0, sizeof sig);
 	max_entries = cpuid (leaf, sig);
 	rc = translate(sig);
 
@@ -140,7 +182,13 @@ static CpuID getID() {
 		}
 	}
 
-#ifdef _WIN32
+	if(rc == BARE_METAL) {
+		return rc;
+	}
+
+	// https://stackoverflow.com/questions/498371/how-to-detect-if-my-application-is-running-in-a-virtual-machine
+
+	#ifdef HAVE_WMI
 	if(rc == VPC) {
 		//
 		// Recent Windows 10 build is returning VPC even on bare metal, try to use WMI to identify the real hypervisor
@@ -156,19 +204,12 @@ static CpuID getID() {
 			{ VPC,	 	"MICROSOFT HYPER-V"		}
 		};
 
-		rc = BARE_METAL;
-
-#ifdef HAVE_WMI
-
-		try {
-
+		{
 			auto computer = Wmi::retrieveWmi<Wmi::Win32_ComputerSystemProduct>();
 
-#ifdef DEBUG
-			cout << "*** Vendor= '" << computer.Vendor << "'" << endl;
-#endif // DEBUG
-
 			if(!computer.Vendor.empty()) {
+
+				rc = BARE_METAL;
 
 				for(size_t ix = 0; ix < computer.Vendor.size(); ix++) {
 					computer.Vendor[ix] = toupper(computer.Vendor[ix]);
@@ -182,73 +223,14 @@ static CpuID getID() {
 				}
 
 			}
-
-		} catch (const Wmi::WmiException &ex) {
-			rc = UNKNOWN;
-			cerr << "Wmi error: " << ex.errorMessage << ", Code: " << ex.hexErrorCode() << endl;
 		}
 
-#endif // HAVE_WMI
-
 	}
-#endif // _WIN32
+	#endif // HAVE_WMI
 
 	return rc;
 
 }
-
-VirtualMachine::operator bool() const {
-	return getID() != BARE_METAL;
-}
-
-VMDETECT_API const char * virtual_machine_name() {
-
-	static const struct Key {
-		CpuID	  	  id;
-		const char	* name;
-	} keys[] = {
-		{ VMWARE,	"VMware"		},
-		{ VPC,		"Microsoft Hv"	},
-		{ BHIVE,	"bhyve"			},
-		{ XEN,		"Xen"			},
-		{ KVM,		"KVM"			},
-		{ QEMU,		"QEMU"			},
-		{ LKVM,		"LKVM"			},
-		{ VMM,		"OpenBSDVMM58"	}
-	};
-
-	CpuID id = getID();
-	if(id == BARE_METAL)
-		return "";
-
-	for(size_t ix = 0; ix < (sizeof(keys)/sizeof(keys[0])); ix++) {
-		if(id == keys[ix].id) {
-			return keys[ix].name;
-		}
-	}
-
-	return "Unknown";
-}
-
-const std::string VirtualMachine::to_string() const {
-	return string{virtual_machine_name()};
-}
-
-#else // !i386, !x86_64
-
-VirtualMachine::operator bool() const {
-	return false;
-}
-
-const std::string VirtualMachine::to_string() const {
-	return "";
-}
-
-const std::string VirtualMachine::to_string() const {
-	return "";
-}
-
-#endif // !i386, !x86_64
 
 
 

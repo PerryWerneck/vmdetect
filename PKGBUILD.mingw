@@ -10,9 +10,9 @@ source=()
 #}
 
 pkgver=1.1
-pkgrel=1
-pkgdesc="Detect when running under virtual machine"
-url="https://github.com/PerryWerneck/vmdetect"
+pkgrel=0
+pkgdesc="Get DMI information using URL format"
+url="https://github.com/PerryWerneck/dmiget"
 arch=(i686 x86_64)
 license=(GPL)
 depends=()
@@ -24,11 +24,12 @@ conflicts=($pkgname)
 
 prepare() {
   rm -fr "$srcdir/$pkgname"
-  ln -snf "$startdir" "$srcdir/$pkgname"
+  mkdir -p $srcdir
+  ln -snf "$startdir" "$srcdir/.build"
 }
 
 build() {
-  cd $pkgname
+  cd .build
   ./autogen.sh \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
@@ -39,7 +40,7 @@ build() {
 }
 
 package() {
-  cd $pkgname
+  cd .build
   make DESTDIR="${pkgdir}" install
   install \
     -Dm644 \

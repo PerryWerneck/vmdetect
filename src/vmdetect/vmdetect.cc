@@ -17,40 +17,152 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
+ #ifdef HAVE_CONFIG_H
+	#include <config.h>
+ #endif // HAVE_CONFIG_H
+
  #include <iostream>
  #include <vmdetect/virtualmachine.h>
  #include <iostream>
- #include <getopt.h>
+ #include <functional>
+ #include <cstring>
 
  using namespace std;
 
+ /// @brief Command-line arguments.
+ static const struct Worker {
+
+	char short_arg;
+	const char *long_arg;
+	const bool required;
+	const char *help;
+	const std::function<bool(const char *argument)> method;
+
+	Worker(char s, const char *l, const char *h, const bool r, const std::function<bool(const char *argument)> m)
+		: short_arg{s}, long_arg{l}, required{r}, help{h}, method{m} {
+	}
+ } workers[] {
+	{
+		'n',"name",
+		"Show virtual machine name ('Bare metal' if not virtual)",
+		false,
+		[](const char *) {
+			VirtualMachine vm;
+			if(vm) {
+				cout << vm.name() << endl;
+			} else {
+				cout << "Bare metal" << endl;
+			}
+			return false;
+		}
+	},
+	{
+		'i',"id",
+		"Show CPU ID",
+		false,
+		[](const char *) {
+			VirtualMachine vm;
+			if(vm) {
+				cout << ((int) vm.id()) << endl;
+			} else {
+				cout << "0" << endl;
+			}
+			return false;
+		}
+	},
+ };
 
  int main(int argc, char **argv) {
 
-	static struct option options[] = {
-		{ "probe",		no_argument,		0,	'p' },
-	};
-
 	try {
 
-		int long_index =0;
-		int opt;
-		while((opt = getopt_long(argc, argv, "p", options, &long_index )) != -1) {
+		if(argc == 1) {
+			return VirtualMachine() ? 0 : 1;
+		}
 
-			switch(opt) {
-			case 'p':
-				return VirtualMachine() ? 0 : 1;
+		// Check command-line arguments.
+
+		while(--argc) {
+
+			bool found = false;
+			const char *argument = *(++argv);
+
+			if(!strncmp(argument,"--",2)) {
+
+				argument += 2;
+				const char *value = strchr(argument,'=');
+				string name;
+				if(value) {
+					name.assign(argument,value-argument);
+					value++;
+				} else {
+					name.assign(argument);
+					value = "";
+				}
+
+				for(const Worker &worker : workers) {
+
+					found = (strcmp(name.c_str(),worker.long_arg) == 0);
+					if(found) {
+						if(worker.method(value)) {
+							return 0;
+						}
+						break;
+					}
+
+				}
+
+			} else if(argument[0] == '-') {
+
+				argument++;
+
+				if(argument[1]) {
+					cerr << "Unexpected argument" << endl;
+					return -1;
+				}
+
+				for(const Worker &worker : workers) {
+
+					found = (worker.short_arg == argument[0]);
+					if(found) {
+
+						const char *value = "";
+
+						if(worker.required) {
+
+							if(argc == 1) {
+								cerr << "An argument is required" << endl;
+								exit(-1);
+							}
+
+							value = *(++argv);
+							--argc;
+
+							if(value[0] == '-') {
+								cerr << "An argument is required" << endl;
+								exit(-1);
+							}
+
+						}
+
+						if(worker.method(value)) {
+							return 0;
+						}
+						break;
+
+					}
+
+				}
+
 			}
 
 		}
 
-		cout << VirtualMachine() << endl;
+	} catch(const std::exception &e) {
 
-	} catch(const exception &e) {
+		cerr << e.what() << endl;
+		exit(-1);
 
-		cerr << endl << e.what() << endl;
-		return -1;
 	}
 
 	return 0;

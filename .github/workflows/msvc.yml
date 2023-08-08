@@ -1,36 +1,33 @@
-name: MSYS2
-on:
+name: PublishMSVC
+on:   
   push:
     branches:
-      - develop
-  pull_request:
-    branches:
-      - master
-
+      - msvc      
 jobs:
-  msys2-mingw:
+  msvc-pack:
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+    name: Publish MSVC 64
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
       - uses: oprypin/find-latest-tag@v1
         id: gettag
         with:
           repository: PerryWerneck/vmdetect
           releases-only: true
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: mingw64
-          update: true
-          install: git dos2unix mingw-w64-x86_64-gcc automake autoconf make git pkgconf gettext-devel libtool xz
-      - name: CI-Build
-        run: ./win/ci-build.sh
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+      - name: pack
+        run: |
+          nmake /f win\Makefile.msc
+          mkdir include
+          mkdir include\vmdetect
+          xcopy /s src\include\vmdetect include\vmdetect
+          7z a msvc-vmdetect-${{ steps.gettag.outputs.tag }}.zip .\bin .\lib .\include
       - uses: ncipollo/release-action@v1
         with:
           tag: ${{ steps.gettag.outputs.tag }}
-          artifacts: "*.pkg.tar.zst"
+          artifacts: "*vmdetect*.zip"
           allowUpdates: true
           draft: false
           makeLatest: true
