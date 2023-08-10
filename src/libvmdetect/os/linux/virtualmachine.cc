@@ -38,8 +38,10 @@
  *
  */
 
+ #ifdef HAVE_CONFIG_H
+	#include <config.h>
+ #endif // HAVE_CONFIG_H
 
- #include <config.h>
  #include <stdexcept>
  #include <vmdetect/virtualmachine.h>
  #include <cstring>

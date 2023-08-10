@@ -5,12 +5,14 @@ from setuptools import setup, Extension
 import platform
 import os
 import glob
+import sysconfig
 
 include_dirs = ['src/include']
 library_dirs = []
 extra_link_args = []
 library_names = [ ]
 src_files = [ ]
+extra_compile_args = sysconfig.get_config_var('CFLAGS').split()
 
 for filename in glob.glob("src/libdmiget/*.cc"):
 	src_files.append(filename)
@@ -27,6 +29,16 @@ for filename in glob.glob("src/python/*.cc"):
 for filename in glob.glob("src/python/*.c"):
 	src_files.append(filename)
 
+package_version='0.1'
+with open(r'configure.ac', 'r') as fp:
+    lines = fp.readlines()
+    for line in lines:
+        if line.find('AC_INIT') != -1:
+            package_version = line.split('[')[2].split(']')[0].strip()
+            break;
+
+extra_compile_args.append('-DPACKAGE_VERSION=\"' + package_version + '\"')
+
 if platform.system() == 'Windows':
 
 	include_dirs.append('src/libvmdetect/os/windows/wmi/include')
@@ -42,6 +54,8 @@ if platform.system() == 'Windows':
 
 else:
 
+	extra_compile_args.append('-DHAVE_UNISTD_H')
+
 	library_names.append('systemd')
 	
 	for filename in glob.glob("src/libvmdetect/os/linux/*.cc"):
@@ -56,14 +70,6 @@ virtualmachine = Extension(
 		sources=src_files
 )
 
-package_version='0.1'
-with open(r'configure.ac', 'r') as fp:
-    lines = fp.readlines()
-    for line in lines:
-        if line.find('AC_INIT') != -1:
-            package_version = line.split('[')[2].split(']')[0].strip()
-            break;
-            
 setup ( name = 'virtualmachine',
 	version = package_version,
 	description = 'Python library to identify virtual machine.',
