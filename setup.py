@@ -77,8 +77,37 @@ setup ( name = 'virtualmachine',
 	author = 'Perry Werneck',
 	author_email = 'perry.werneck@gmail.com',
 	url = 'https://github.com/PerryWerneck/vmdetect',
+	long_description_content_type = 'text/markdown',
 	long_description = '''
-This is an extension to identify virtual machine on python applications.
+## About
+
+This library allow python applications to detect when running on virtual machines; works on windows and linux. 
+
+Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
+
+## Installation
+
+### PyPI
+
+```shell
+pip install virtualmachine
+```
+
+### Linux packages
+
+You can get linux packages (RPM, Deb, arch) from Suse's [Open Build Service](https://software.opensuse.org/download.html?project=home%3APerryWerneck%3Audjat&package=vmdetect)
+
+## Usage
+
+```python
+import virtualmachine
+print(virtualmachine.name())
+```
+
+```python
+import virtualmachine
+print(virtualmachine.id())
+```
 ''',
 	ext_modules = [ virtualmachine ])
 
