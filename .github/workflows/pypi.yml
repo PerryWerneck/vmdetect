@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Publish Pypi package
     environment:
-      name: pypi
+      name: pytest
       url: https://test.pypi.org/p/virtualmachine
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing  
@@ -21,6 +21,6 @@ jobs:
         run: python setup.py sdist
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
-          with:
-            repository-url: https://test.pypi.org/legacy/
+        with:
+          repository-url: https://test.pypi.org/legacy/
 
