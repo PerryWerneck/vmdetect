@@ -12,7 +12,7 @@ library_dirs = []
 extra_link_args = []
 library_names = [ ]
 src_files = [ ]
-extra_compile_args = sysconfig.get_config_var('CFLAGS').split()
+extra_compile_args = [ ]
 
 for filename in glob.glob("src/libdmiget/*.cc"):
 	src_files.append(filename)
