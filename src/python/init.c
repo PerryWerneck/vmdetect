@@ -72,8 +72,8 @@
 
 static struct PyModuleDef definition = {
 	PyModuleDef_HEAD_INIT,
-	.m_name = "virtualmachine",							// name of module
-	.m_doc = "Get values from virtualmachine table",	// module documentation, may be NUL
+	.m_name = "virtualmachine",					// name of module
+	.m_doc = "Get info about virtual machine",	// module documentation, may be NUL
 	.m_size = -1,								// size of per-interpreter state of the module or -1 if the module keeps state in global variables.
 	.m_methods = methods,						// Module methods
 	.m_free = (freefunc) cleanup
