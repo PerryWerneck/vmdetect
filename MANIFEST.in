@@ -1,0 +1,5 @@
+include configure.ac
+include src/include/private/*.h
+include src/include/vmdetect/*.h
+include src/libvmdetect/os/windows/wmi/include/*.h
+
