@@ -37,7 +37,7 @@ with open(r'configure.ac', 'r') as fp:
             package_version = line.split('[')[2].split(']')[0].strip()
             break;
 
-package_version += '.0'
+package_version += '.1'
 extra_compile_args.append('-DPACKAGE_VERSION=\"' + package_version + '\"')
 
 if platform.system() == 'Windows':
