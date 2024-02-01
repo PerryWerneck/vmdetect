@@ -61,9 +61,9 @@
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
 	string virtualization;
 
- #ifdef HAVE_SYSTEMD
+#ifdef HAVE_SYSTEMD
 	sd_bus * bus = NULL;
-	if(sd_bus_open_system(&bus)) {
+	if(sd_bus_default_system(&bus)) {
 
 		try {
 

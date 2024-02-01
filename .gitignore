@@ -66,6 +66,8 @@ po
 .obj
 *.depend
 *.bak
+*.egg-info
+
 
 
 

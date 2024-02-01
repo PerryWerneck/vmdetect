@@ -6,7 +6,7 @@ AC_PREREQ(2.59)
 
 dnl Initialise automake with the package name, version and
 dnl bug-reporting address.
-AC_INIT([vmdetect], [1.1], [perry.werneck@gmail.com], [vmdetect], [https://github.com/PerryWerneck/vmdetect.git])
+AC_INIT([vmdetect], [1.2], [perry.werneck@gmail.com], [vmdetect], [https://github.com/PerryWerneck/vmdetect.git])
 
 dnl Place auxilliary scripts here.
 AC_CONFIG_AUX_DIR([scripts])
