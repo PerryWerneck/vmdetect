@@ -236,7 +236,7 @@ install-dev: \
 		$(DESTDIR)$(includedir)/@PACKAGE_NAME@
 
 	@$(INSTALL_DATA) \
-		src/include/@PACKAGE_NAME@/*.h \
+		$(srcdir)/src/include/@PACKAGE_NAME@/*.h \
 		$(DESTDIR)$(includedir)/@PACKAGE_NAME@
 
 	# Install PKG-CONFIG files
