@@ -40,7 +40,7 @@ autopoint
 
 cd ${builddir}
 
-test -n "$NOCONFIGURE" || "./configure" "$@"
+test -n "$NOCONFIGURE" || "$srcdir/configure" --srcdir=${srcdir} $@
 
 
 

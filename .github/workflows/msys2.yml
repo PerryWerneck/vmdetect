@@ -1,11 +1,9 @@
-name: Publish
+name: WindowsBuild
 on:
   push:
     branches:
       - win
-    tags:
-      - '*'
-  
+
 jobs:
   msys2-mingw:
     runs-on: windows-latest
@@ -34,17 +32,7 @@ jobs:
           pacman -U --noconfirm *.pkg.tar.zst
           dos2unix PKGBUILD.mingw
           makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.gettag.outputs.tag }}
-          artifacts: "*vmdetect*.pkg.tar.zst"
-          allowUpdates: true
-          draft: false
-          makeLatest: true
-          omitBody: true
-          omitPrereleaseDuringUpdate: true
-          replacesArtifacts: true
-  msvc-pack:
+  msvc:
     runs-on: windows-latest
     name: Publish MSVC 64
     steps:
@@ -60,20 +48,6 @@ jobs:
       - name: pack
         run: |
           nmake /f win\Makefile.msc
-          mkdir include
-          mkdir include\vmdetect
-          xcopy /s src\include\vmdetect include\vmdetect
-          7z a msvc-vmdetect-${{ steps.gettag.outputs.tag }}.zip .\bin .\lib .\include
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.gettag.outputs.tag }}
-          artifacts: "*vmdetect*.zip"
-          allowUpdates: true
-          draft: false
-          makeLatest: true
-          omitBody: true
-          omitPrereleaseDuringUpdate: true
-          replacesArtifacts: true
   py-win32:
     runs-on: windows-latest
     steps:
@@ -89,15 +63,6 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
       - name: Build installer
-        run: python setup.py bdist_wininst
-      - uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ steps.gettag.outputs.tag }}
-          artifacts: "dist/*.exe"
-          allowUpdates: true
-          draft: false
-          makeLatest: true
-          omitBody: true
-          omitPrereleaseDuringUpdate: true
-          replacesArtifacts: true
+        run: |
+          python setup.py bdist_wininst
 
