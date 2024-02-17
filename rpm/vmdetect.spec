@@ -18,7 +18,7 @@
 
 Summary:		Detect when running under virtual machine
 Name:			vmdetect
-Version:		1.1
+Version:		1.0
 Release:		0
 License:		LGPL-3.0
 Source:			%{name}-%{version}.tar.xz
@@ -91,7 +91,7 @@ make all
 %files devel
 %defattr(-,root,root)
 %{_libdir}/*.so
-%{_libdir}/*.a
+%exclude %{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h
