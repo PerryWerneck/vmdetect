@@ -77,6 +77,7 @@ DEPENDS= \
 CFLAGS= \
 	@CXXFLAGS@ \
 	-I$(srcdir)/src/include \
+	-Isrc/include \
 	-DHAVE_CONFIG_H=1 \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@SYSTEMD_CFLAGS@ \
