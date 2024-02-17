@@ -1,0 +1,68 @@
+name: WindowsBuild
+on:
+  push:
+    branches:
+      - win
+
+jobs:
+  msys2-mingw:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw64
+          update: true
+          install: git dos2unix mingw-w64-x86_64-gcc automake autoconf make git pkgconf gettext-devel libtool xz
+      - uses: robinraju/release-downloader@v1.7
+        with:
+          repository: "PerryWerneck/wmi"
+          latest: true
+          fileName: "mingw-w64-x86_64-wmi++-1.0-1-x86_64.pkg.tar.zst"      
+      - name: CI-Build
+        run: |
+          pacman -U --noconfirm *.pkg.tar.zst
+          dos2unix PKGBUILD.mingw
+          makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
+  msvc:
+    runs-on: windows-latest
+    name: Publish MSVC 64
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+      - name: pack
+        run: |
+          nmake /f win\Makefile.msc
+  py-win32:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true  # We know that all relevant tags have a GitHub release for them.
+      - uses: ilammy/msvc-dev-cmd@v1.4.1
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Build installer
+        run: |
+          python setup.py bdist_wininst
+

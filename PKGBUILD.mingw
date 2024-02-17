@@ -1,22 +1,36 @@
 # Maintainer: Perry Werneck <perry.werneck@gmail.com>
 # References: https://www.msys2.org/wiki/Creating-Packages/
 
-_realname=vmdetect
+# SPDX-License-Identifier: LGPL-3.0-or-later
+
+# Copyright (C) 2024 Perry Werneck <perry.werneck@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+_realname=$(grep AC_INIT "${startdir}/configure.ac" | cut -d[ -f2 | cut -d] -f1)
+
 pkgname=${MINGW_PACKAGE_PREFIX}-${_realname}
 source=()
 
-#pkgver() {
-#  grep AC_INIT ${startdir}/configure.ac | cut -d[ -f3 | cut -d] -f1
-#}
-
-pkgver=1.1
+pkgver=$(grep AC_INIT "${startdir}/configure.ac" | cut -d[ -f3 | cut -d] -f1)
 pkgrel=0
-pkgdesc="Get DMI information using URL format"
-url="https://github.com/PerryWerneck/dmiget"
+pkgdesc="Tool & Library to get SMBIOS info using an URL format"
+url="https://github.com/PerryWerneck/${_realname}"
 arch=(i686 x86_64)
-license=(GPL)
-depends=()
-makedepends=(autoconf automake make libtool gzip)
+license=(LGPL-3.0-or-later)
+depends=(${MINGW_PACKAGE_PREFIX}-openssl)
+makedepends=(autoconf automake make libtool pkgconf gzip dos2unix ${MINGW_PACKAGE_PREFIX}-gcc ${MINGW_PACKAGE_PREFIX}-gettext ${MINGW_PACKAGE_PREFIX}-openssl)
 checkdepends=()
 
 provides=($pkgname) 
@@ -24,13 +38,12 @@ conflicts=($pkgname)
 
 prepare() {
   rm -fr "$srcdir/$pkgname"
-  mkdir -p $srcdir
-  ln -snf "$startdir" "$srcdir/.build"
+  mkdir -p "$srcdir/$pkgname"
 }
 
 build() {
-  cd .build
-  ./autogen.sh \
+  cd "$srcdir/$pkgname"
+  ${startdir}/autogen.sh \
     --prefix=${MINGW_PREFIX} \
     --build=${MINGW_CHOST} \
     --host=${MINGW_CHOST} \
@@ -40,12 +53,10 @@ build() {
 }
 
 package() {
-  cd .build
+  cd "$srcdir/$pkgname"
   make DESTDIR="${pkgdir}" install
   install \
     -Dm644 \
     "LICENSE" \
     "${pkgdir}${MINGW_PREFIX}/share/licenses/${_realname}/LICENSE"
 }
-
-
