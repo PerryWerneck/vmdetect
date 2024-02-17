@@ -21,7 +21,7 @@ jobs:
         with:
           msystem: mingw64
           update: true
-          install: git dos2unix mingw-w64-x86_64-gcc automake autoconf make git pkgconf gettext-devel libtool xz
+          install: zip dos2unix mingw-w64-x86_64-gcc automake autoconf make git pkgconf mingw-w64-x86_64-gettext gettext-devel mingw-w64-x86_64-openssl libtool
       - uses: robinraju/release-downloader@v1.7
         with:
           repository: "PerryWerneck/wmi"
