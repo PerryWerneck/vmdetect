@@ -2,11 +2,10 @@ name: Publish
 on:
   push:
     branches:
-      - develop
-  pull_request:
-    branches:
-      - master
-
+      - win
+    tags:
+      - '*'
+  
 jobs:
   msys2-mingw:
     runs-on: windows-latest
