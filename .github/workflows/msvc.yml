@@ -2,7 +2,8 @@ name: check-msvc
 on:   
   push:
     branches:
-      - msvc      
+      - msvc
+      - master
 jobs:
   build-msvc:
     runs-on: windows-latest
