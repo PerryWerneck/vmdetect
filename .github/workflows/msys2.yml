@@ -33,37 +33,4 @@ jobs:
           pacman -U --noconfirm *.pkg.tar.zst
           dos2unix PKGBUILD.mingw
           makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
-  msvc:
-    runs-on: windows-latest
-    name: Publish MSVC 64
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - uses: oprypin/find-latest-tag@v1
-        id: gettag
-        with:
-          repository: PerryWerneck/vmdetect
-          releases-only: true
-      - uses: ilammy/msvc-dev-cmd@v1.4.1
-      - name: pack
-        run: |
-          nmake /f win\Makefile.msc
-  py-win32:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - uses: oprypin/find-latest-tag@v1
-        id: gettag
-        with:
-          repository: PerryWerneck/vmdetect
-          releases-only: true  # We know that all relevant tags have a GitHub release for them.
-      - uses: ilammy/msvc-dev-cmd@v1.4.1
-      - name: Set up Python
-        uses: actions/setup-python@v4
-      - name: Build installer
-        run: |
-          python setup.py bdist_wininst
 
