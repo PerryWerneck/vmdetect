@@ -8,7 +8,6 @@ on:
 jobs:
   build-msvc:
     runs-on: windows-latest
-    name: Publish MSVC 64
     steps:
       - uses: actions/checkout@v3
         with:
