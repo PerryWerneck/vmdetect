@@ -7,7 +7,7 @@ on:
       - '*'
   
 jobs:
-  msys2-mingw:
+  publish-mingw:
     runs-on: windows-latest
     defaults:
       run:
@@ -44,7 +44,7 @@ jobs:
           omitBody: true
           omitPrereleaseDuringUpdate: true
           replacesArtifacts: true
-  msvc-pack:
+  publish-msvc:
     runs-on: windows-latest
     name: Publish MSVC 64
     steps:

@@ -1,4 +1,4 @@
-name: WindowsBuild
+name: check-msys2
 on:
   push:
     branches:

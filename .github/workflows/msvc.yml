@@ -1,10 +1,10 @@
-name: PublishMSVC
+name: check-msvc
 on:   
   push:
     branches:
       - msvc      
 jobs:
-  msvc-pack:
+  build-msvc:
     runs-on: windows-latest
     name: Publish MSVC 64
     steps:
