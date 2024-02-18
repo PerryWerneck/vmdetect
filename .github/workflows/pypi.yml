@@ -2,10 +2,9 @@
 name: PyPi
 on:
   push:
-    branches:
-      - python
-    tags:
-      - '*'
+    branches: [ "python" ]
+    tags: [ "*" ]
+
 jobs:
   python:
     runs-on: ubuntu-latest

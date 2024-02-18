@@ -1,10 +1,8 @@
 name: Publish
 on:
   push:
-    branches:
-      - win
-    tags:
-      - '*'
+    branches: [ "win" ]
+    tags: [ "*" ]
   
 jobs:
   publish-mingw:
