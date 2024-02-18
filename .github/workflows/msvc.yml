@@ -1,13 +1,13 @@
 name: check-msvc
 on:   
   push:
-    branches:
-      - msvc
-      - master
+    branches: [ "msvc" ]
+  pull_request:
+    branches: [ "master" ]
+
 jobs:
   build-msvc:
     runs-on: windows-latest
-    name: Publish MSVC 64
     steps:
       - uses: actions/checkout@v3
         with:
