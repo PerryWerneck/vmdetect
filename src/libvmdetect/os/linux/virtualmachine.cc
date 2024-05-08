@@ -76,8 +76,8 @@
 					cout << PACKAGE_NAME << "\tError " << rc << " getting system bus" << endl;
 				}
 				ptr = NULL;
-			}
-			if(verbose) {
+
+			} else if(verbose) {
 				cout << PACKAGE_NAME << "\tGot system bus on socket " << sd_bus_get_fd(ptr) << endl;
 			}
 		}
