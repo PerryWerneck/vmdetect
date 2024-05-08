@@ -29,7 +29,21 @@
  extern "C" {
 
  class VMDETECT_API VirtualMachine {
+ private:
+	bool console_output = false;
+
  public:
+
+ 	constexpr VirtualMachine(bool v = false) : console_output{v} {
+ 	}
+
+ 	inline bool verbose() const noexcept {
+		return console_output;
+ 	}
+
+ 	inline void verbose(bool v) noexcept {
+		console_output = v;
+ 	}
 
 	enum CpuID : uint8_t {
 		BARE_METAL,			///< @brief Running on bare metal
@@ -50,11 +64,11 @@
 	operator bool() const;
 	std::string name() const;
 
- #ifndef _MSC_VER
+#ifndef _MSC_VER
 	inline std::string to_string() const {
 		return name();
 	}
- #endif // !_MSC_VER
+#endif // !_MSC_VER
 
 	static const VirtualMachine & getInstance();
 

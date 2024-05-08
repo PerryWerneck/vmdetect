@@ -47,6 +47,7 @@
  #include <cstring>
  #include <string>
  #include <stdint.h>
+ #include <iostream>
 
  using namespace std;
 
@@ -61,9 +62,48 @@
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
 	string virtualization;
 
-#ifdef HAVE_SYSTEMD
-	sd_bus * bus = NULL;
-	if(sd_bus_default_system(&bus)) {
+#if defined(HAVE_SYSTEMD)
+
+	struct SystemBus {
+
+		bool verbose;
+		sd_bus *ptr = NULL;
+
+		SystemBus(bool v) : verbose{v} {
+			int rc = sd_bus_default_system(&ptr);
+			if(rc < 0) {
+				if(verbose) {
+					cout << PACKAGE_NAME << "\tError " << rc << " getting system bus" << endl;
+				}
+				ptr = NULL;
+			}
+			if(verbose) {
+				cout << PACKAGE_NAME << "\tGot system bus on socket " << sd_bus_get_fd(ptr) << endl;
+			}
+		}
+
+		~SystemBus() {
+
+			sd_bus_flush(ptr);
+
+			if(verbose) {
+				cout << PACKAGE_NAME << "\tReleasing system bus from socket " << sd_bus_get_fd(ptr) << endl;
+			}
+
+			sd_bus_unrefp(&ptr);
+		}
+
+	};
+
+	struct BusMessage {
+		sd_bus_message *ptr = NULL;
+		~BusMessage() {
+			sd_bus_message_unrefp(&ptr);
+		}
+	};
+
+	SystemBus bus{console_output};
+	if(bus.ptr) {
 
 		try {
 
@@ -79,16 +119,16 @@
 			*/
 
 			sd_bus_error error = SD_BUS_ERROR_NULL;
-			sd_bus_message *response = NULL;
+			BusMessage response;
 
 			int rc = sd_bus_call_method(
-					bus,                   					// On the System Bus
+					bus.ptr,                   				// On the System Bus
 					"org.freedesktop.systemd1",				// Service to contact
 					"/org/freedesktop/systemd1", 			// Object path
 					"org.freedesktop.DBus.Properties",		// Interface name
 					"Get",									// Method to be called
 					&error,									// object to return error
-					&response,								// Response message on success
+					&response.ptr,							// Response message on success
 					"ss",
 					"org.freedesktop.systemd1.Manager",
 					"Virtualization"
@@ -99,27 +139,21 @@
 				sd_bus_error_free(&error);
 				throw runtime_error(err);;
 
-			} else if(response) {
+			} else if(response.ptr) {
 
 				char *text = NULL;
 
-				if(sd_bus_message_read(response, "v", "s", &text) < 0) {
-					sd_bus_message_unref(response);
+				if(sd_bus_message_read(response.ptr, "v", "s", &text) < 0) {
 					throw runtime_error("Can't parse systemd virtualization response");
 				} else if(text && *text) {
 					virtualization = text;
 				}
 
-				sd_bus_message_unref(response);
-
 			}
 
 		} catch(...) {
-			sd_bus_flush_close_unref(bus);
 			throw;
 		}
-
-		sd_bus_flush_close_unref(bus);
 
 		return virtualization;
 

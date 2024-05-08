@@ -30,6 +30,8 @@
  using namespace std;
 
  /// @brief Command-line arguments.
+ static bool verbose = false;
+
  static const struct Worker {
 
 	char short_arg;
@@ -43,11 +45,20 @@
 	}
  } workers[] {
 	{
+		'v',"verbose",
+		"Show virtual machine name ('Bare metal' if not virtual)",
+		false,
+		[](const char *) {
+			verbose = true;
+			return false;
+		}
+	},
+	{
 		'n',"name",
 		"Show virtual machine name ('Bare metal' if not virtual)",
 		false,
 		[](const char *) {
-			VirtualMachine vm;
+			VirtualMachine vm{verbose};
 			if(vm) {
 				cout << vm.name() << endl;
 			} else {
@@ -61,7 +72,7 @@
 		"Show CPU ID",
 		false,
 		[](const char *) {
-			VirtualMachine vm;
+			VirtualMachine vm{verbose};
 			if(vm) {
 				cout << ((int) vm.id()) << endl;
 			} else {
@@ -77,7 +88,11 @@
 	try {
 
 		if(argc == 1) {
+#ifdef DEBUG
+			return VirtualMachine(true) ? 0 : 1;
+#else
 			return VirtualMachine() ? 0 : 1;
+#endif // DEBUG
 		}
 
 		// Check command-line arguments.
