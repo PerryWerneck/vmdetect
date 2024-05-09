@@ -93,7 +93,7 @@
 				cout << PACKAGE_NAME << ": ";
 				getline(cin,cmdline);
 
-				if(empty(cmdline) || !strncasecmp(cmdline.c_str(),"exit",4)) {
+				if(cmdline.empty() || !strncasecmp(cmdline.c_str(),"exit",4)) {
 					break;
 				} else if(!strncasecmp(cmdline.c_str(),"name",4)) {
 					cout << VirtualMachine{verbose}.name() << endl;
