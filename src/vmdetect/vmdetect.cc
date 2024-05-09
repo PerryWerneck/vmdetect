@@ -81,6 +81,32 @@
 			return false;
 		}
 	},
+	{
+		'I',"interactive",
+		"Interactive mode",
+		false,
+		[](const char *) {
+
+			string cmdline;
+
+			while(1) {
+				cout << PACKAGE_NAME << ": ";
+				getline(cin,cmdline);
+
+				if(empty(cmdline) || !strncasecmp(cmdline.c_str(),"exit",4)) {
+					break;
+				} else if(!strncasecmp(cmdline.c_str(),"name",4)) {
+					cout << VirtualMachine{verbose}.name() << endl;
+				} else {
+					cout << "'" << cmdline << "': " << strerror(ENOENT) << endl;
+				}
+
+			}
+
+			return false;
+		}
+	},
+
  };
 
  int main(int argc, char **argv) {

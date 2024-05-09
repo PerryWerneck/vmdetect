@@ -84,10 +84,11 @@
 		DBusConnection * connct = NULL;
 
 		SystemBus(bool v) : verbose{v} {
+
 			DBusError err;
 			dbus_error_init(&err);
 
-			connct = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
+			connct = dbus_bus_get_private(DBUS_BUS_SYSTEM, &err);
 			if(dbus_error_is_set(&err)) {
 				if(verbose) {
 					cout << PACKAGE_NAME << "\t" << err.message << endl;
@@ -123,6 +124,7 @@
 					}
 					cout << endl;
 				}
+				dbus_connection_close(connct);
 				dbus_connection_unref(connct);
 			}
 
