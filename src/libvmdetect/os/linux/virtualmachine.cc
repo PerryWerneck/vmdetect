@@ -64,7 +64,17 @@
  std::string VirtualMachine::name() const {
 
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
-	string virtualization;
+	/*
+		dbus-send \
+			--session \
+			--dest=org.freedesktop.systemd1 \
+			--print-reply \
+			"/org/freedesktop/systemd1" \
+			"org.freedesktop.DBus.Properties.Get" \
+			string:"org.freedesktop.systemd1.Manager" \
+			string:"Virtualization"
+	*/
+
 
 #if defined(HAVE_DBUS)
 
@@ -93,9 +103,9 @@
 
 			if(verbose) {
 				int fd;
-				cout << PACKAGE_NAME << "\tGot connection '" << ((unsigned long) this) << "'";
+				cout << PACKAGE_NAME << "\tGot d-bus connection '" << ((unsigned long) this) << "'";
 				if(dbus_connection_get_socket(connct,&fd)) {
-					cout << "from socket '" << fd << "'";
+					cout << " from socket '" << fd << "'";
 				}
 				cout << endl;
 			}
@@ -107,9 +117,9 @@
 			if(connct) {
 				if(verbose) {
 					int fd;
-					cout << PACKAGE_NAME << "\tReleasing connection '" << ((unsigned long) this) << "'";
+					cout << PACKAGE_NAME << "\tReleasing d-bus connection '" << ((unsigned long) this) << "'";
 					if(connct && dbus_connection_get_socket(connct,&fd)) {
-						cout << "from socket '" << fd << "'";
+						cout << " from socket '" << fd << "'";
 					}
 					cout << endl;
 				}
@@ -206,14 +216,14 @@
 
 			if(response) {
 				dbus_message_unref(response);
+				response = NULL;
 			}
 
-			string message{error.message};
-			dbus_error_free(&error);
-			throw runtime_error(message);
-		}
+			if(console_output) {
+				cout << PACKAGE_NAME << "\t" << error.message << endl;
+			}
 
-		if(response) {
+		} else if(response) {
 
 			if(dbus_message_get_type(response) == DBUS_MESSAGE_TYPE_ERROR) {
 
@@ -236,7 +246,6 @@
 
 	}
 
-
 #elif defined(HAVE_SYSTEMD)
 
 	struct SystemBus {
@@ -253,7 +262,7 @@
 				ptr = NULL;
 
 			} else if(verbose) {
-				cout << PACKAGE_NAME << "\tGot system bus on socket " << sd_bus_get_fd(ptr) << endl;
+				cout << PACKAGE_NAME << "\tGot system bus on socket " << sd_bus_get_fd(ptr) << " (SD)" << endl;
 			}
 		}
 
@@ -262,7 +271,7 @@
 			sd_bus_flush(ptr);
 
 			if(verbose) {
-				cout << PACKAGE_NAME << "\tReleasing system bus from socket " << sd_bus_get_fd(ptr) << endl;
+				cout << PACKAGE_NAME << "\tReleasing system bus from socket " << sd_bus_get_fd(ptr) << " (SD)" << endl;
 			}
 
 			sd_bus_unrefp(&ptr);
@@ -278,59 +287,43 @@
 	};
 
 	SystemBus bus{console_output};
+
 	if(bus.ptr) {
 
-		try {
+		sd_bus_error error = SD_BUS_ERROR_NULL;
+		BusMessage response;
 
-			/*
-				dbus-send \
-					--session \
-					--dest=org.freedesktop.systemd1 \
-					--print-reply \
-					"/org/freedesktop/systemd1" \
-					"org.freedesktop.DBus.Properties.Get" \
-					string:"org.freedesktop.systemd1.Manager" \
-					string:"Virtualization"
-			*/
+		int rc = sd_bus_call_method(
+				bus.ptr,                   				// On the System Bus
+				"org.freedesktop.systemd1",				// Service to contact
+				"/org/freedesktop/systemd1", 			// Object path
+				"org.freedesktop.DBus.Properties",		// Interface name
+				"Get",									// Method to be called
+				&error,									// object to return error
+				&response.ptr,							// Response message on success
+				"ss",
+				"org.freedesktop.systemd1.Manager",
+				"Virtualization"
+		);
 
-			sd_bus_error error = SD_BUS_ERROR_NULL;
-			BusMessage response;
+		if(rc < 0) {
+			string err = error.message;
+			sd_bus_error_free(&error);
+			throw runtime_error(err);;
 
-			int rc = sd_bus_call_method(
-					bus.ptr,                   				// On the System Bus
-					"org.freedesktop.systemd1",				// Service to contact
-					"/org/freedesktop/systemd1", 			// Object path
-					"org.freedesktop.DBus.Properties",		// Interface name
-					"Get",									// Method to be called
-					&error,									// object to return error
-					&response.ptr,							// Response message on success
-					"ss",
-					"org.freedesktop.systemd1.Manager",
-					"Virtualization"
-			);
+		} else if(response.ptr) {
 
-			if(rc < 0) {
-				string err = error.message;
-				sd_bus_error_free(&error);
-				throw runtime_error(err);;
+			char *text = NULL;
 
-			} else if(response.ptr) {
-
-				char *text = NULL;
-
-				if(sd_bus_message_read(response.ptr, "v", "s", &text) < 0) {
-					throw runtime_error("Can't parse systemd virtualization response");
-				} else if(text && *text) {
-					virtualization = text;
+			if(sd_bus_message_read(response.ptr, "v", "s", &text) < 0) {
+				if(console_output) {
+					cout << PACKAGE_NAME << "\tCan't parse systemd virtualization response" << endl;
 				}
-
+			} else if(text && *text) {
+				return text;
 			}
 
-		} catch(...) {
-			throw;
 		}
-
-		return virtualization;
 
 	}
 #endif // HAVE_SYSTEMD
