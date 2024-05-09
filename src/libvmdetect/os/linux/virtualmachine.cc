@@ -124,6 +124,7 @@
 					}
 					cout << endl;
 				}
+				dbus_connection_flush(connct);
 				dbus_connection_close(connct);
 				dbus_connection_unref(connct);
 			}
