@@ -51,6 +51,10 @@
 
  using namespace std;
 
+ #ifdef HAVE_DBUS
+	#include <dbus/dbus.h>
+ #endif // HAVE_DBUS
+
  #ifdef HAVE_SYSTEMD
 	#include <systemd/sd-bus.h>
  #endif // HAVE_SYSTEMD
@@ -62,7 +66,178 @@
 	// Reference: (https://www.freedesktop.org/software/systemd/man/org.freedesktop.systemd1.html)
 	string virtualization;
 
-#if defined(HAVE_SYSTEMD)
+#if defined(HAVE_DBUS)
+
+	struct SystemBus {
+
+		bool verbose;
+		DBusConnection * connct = NULL;
+
+		SystemBus(bool v) : verbose{v} {
+			DBusError err;
+			dbus_error_init(&err);
+
+			connct = dbus_bus_get(DBUS_BUS_SYSTEM, &err);
+			if(dbus_error_is_set(&err)) {
+				if(verbose) {
+					cout << PACKAGE_NAME << "\t" << err.message << endl;
+				}
+				if(connct) {
+					dbus_connection_unref(connct);
+					connct = NULL;
+				}
+				return;
+			}
+
+			dbus_connection_set_exit_on_disconnect(connct, false);
+
+			if(verbose) {
+				int fd;
+				cout << PACKAGE_NAME << "\tGot connection '" << ((unsigned long) this) << "'";
+				if(dbus_connection_get_socket(connct,&fd)) {
+					cout << "from socket '" << fd << "'";
+				}
+				cout << endl;
+			}
+
+		}
+
+		~SystemBus() {
+
+			if(connct) {
+				if(verbose) {
+					int fd;
+					cout << PACKAGE_NAME << "\tReleasing connection '" << ((unsigned long) this) << "'";
+					if(connct && dbus_connection_get_socket(connct,&fd)) {
+						cout << "from socket '" << fd << "'";
+					}
+					cout << endl;
+				}
+				dbus_connection_unref(connct);
+			}
+
+		}
+
+	};
+
+	struct Message {
+
+		bool verbose;
+		DBusMessage * message = NULL;
+
+		constexpr Message(DBusMessage *m, bool v) : verbose{v}, message{m} {
+		}
+
+		Message(const char *destination, const char *path, const char *iface, const char *method, bool v)
+			: Message{dbus_message_new_method_call(destination,path,iface,method),v} {
+		}
+
+		~Message() {
+			dbus_message_unref(message);
+		}
+
+		const char * pop(DBusMessageIter &iter) noexcept {
+
+			auto type = dbus_message_iter_get_arg_type(&iter);
+			if(type == DBUS_TYPE_VARIANT) {
+				DBusMessageIter sub;
+				dbus_message_iter_recurse(&iter, &sub);
+				return pop(sub);
+			}
+
+			DBusBasicValue value;
+			dbus_message_iter_get_basic(&iter,&value);
+
+			if(type == DBUS_TYPE_STRING) {
+				return value.str;
+			}
+
+			if(verbose) {
+				cout << PACKAGE_NAME << "\tInvalid response type" << endl;
+			}
+
+			return "";
+		}
+
+	};
+
+	SystemBus bus{console_output};
+
+	if(bus.connct) {
+		//
+		// Build request.
+		//
+		Message request{
+			"org.freedesktop.systemd1",				// Service to contact
+			"/org/freedesktop/systemd1", 			// Object path
+			"org.freedesktop.DBus.Properties",		// Interface name
+			"Get",									// Method to be called
+			console_output
+		};
+
+		const char *args[] = {
+			"org.freedesktop.systemd1.Manager",
+			"Virtualization"
+		};
+
+		dbus_message_append_args(
+			request.message,
+			DBUS_TYPE_STRING, &args[0],
+			DBUS_TYPE_STRING, &args[1],
+			DBUS_TYPE_INVALID
+		);
+
+		//
+		// Call method
+		//
+		DBusError error;
+		dbus_error_init(&error);
+
+		DBusMessage * response =
+			dbus_connection_send_with_reply_and_block(
+				bus.connct,
+				request.message,
+				DBUS_TIMEOUT_USE_DEFAULT,
+				&error
+			);
+
+
+		if(dbus_error_is_set(&error)) {
+
+			if(response) {
+				dbus_message_unref(response);
+			}
+
+			string message{error.message};
+			dbus_error_free(&error);
+			throw runtime_error(message);
+		}
+
+		if(response) {
+
+			if(dbus_message_get_type(response) == DBUS_MESSAGE_TYPE_ERROR) {
+
+				if(console_output) {
+					cout << PACKAGE_NAME << "\t" << dbus_message_get_error_name(response) << endl;
+				}
+
+			} else {
+
+				Message rsp{response,console_output};
+
+				DBusMessageIter iter;
+				dbus_message_iter_init(response,&iter);
+
+				return rsp.pop(iter);
+
+			}
+
+		}
+
+	}
+
+
+#elif defined(HAVE_SYSTEMD)
 
 	struct SystemBus {
 
