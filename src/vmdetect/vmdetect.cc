@@ -90,6 +90,7 @@
 			string cmdline;
 
 			while(1) {
+
 				cout << PACKAGE_NAME << ": ";
 				getline(cin,cmdline);
 
