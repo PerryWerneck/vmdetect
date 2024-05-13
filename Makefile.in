@@ -80,7 +80,7 @@ CFLAGS= \
 	-Isrc/include \
 	-DHAVE_CONFIG_H=1 \
 	-DBUILD_DATE=`date +%Y%m%d` \
-	@SYSTEMD_CFLAGS@ \
+	@SYSTEMD_CFLAGS@ @DBUS_CFLAGS@ \
 	@WMI_CFLAGS@
 
 LDFLAGS= \
@@ -180,7 +180,7 @@ $(BINRLS)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		$(LIBS) @SYSTEMD_LIBS@ @WMI_LIBS@
+		$(LIBS) @SYSTEMD_LIBS@ @DBUS_LIBS@ @WMI_LIBS@
 
 $(BINRLS)/lib$(PACKAGE_NAME).a: \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
@@ -332,7 +332,7 @@ $(BINDBG)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		@SYSTEMD_LIBS@ @WMI_LIBS@
+		@SYSTEMD_LIBS@ @DBUS_LIBS@ @WMI_LIBS@
 
 run: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@

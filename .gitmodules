@@ -1,3 +1,0 @@
-[submodule "src/libvmdetect/os/windows/wmi"]
-	path = src/libvmdetect/os/windows/wmi
-	url = https://github.com/Thomas-Sparber/wmi
