@@ -69,12 +69,12 @@ dnl ---------------------------------------------------------------------------
 dnl Check for OS specifics
 dnl ---------------------------------------------------------------------------
 
-CFLAGS="$CFLAGS -I$ac_pwd/src/libvmdetect/include"
+CXXFLAGS="$CXXFLAGS -I$ac_pwd/src/libvmdetect/include"
 DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 
 case "$host" in
 	*-mingw32|*-pc-msys)
-		CFLAGS="$CFLAGS -pthread "
+		CXXFLAGS="$CXXFLAGS -pthread"
 		LDFLAGS="$LDFLAGS -pthread"
 		DLL_LDFLAGS="$DLL_LDFLAGS -Wl,--output-def,\$(@D)/vmdetect.def"
 		AC_SUBST(LIBEXT,.dll)
@@ -89,7 +89,7 @@ case "$host" in
 		;;
 
  	*)
-		CFLAGS="$CFLAGS -pthread"
+		CXXFLAGS="$CXXFLAGS -pthread -ffat-lto-objects"
 		LDFLAGS="$LDFLAGS -pthread"
 		AC_SUBST(LIBEXT,.so)
 		AC_SUBST(EXEEXT)
@@ -262,7 +262,6 @@ AC_ARG_ENABLE([pic],
 ])
 
 if test "$app_cv_pic" == "yes"; then
-	CFLAGS="$CFLAGS -fPIC"
 	CXXFLAGS="$CXXFLAGS -fPIC"
 fi
 
