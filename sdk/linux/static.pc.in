@@ -6,7 +6,7 @@ includedir=@includedir@
 Name: @PACKAGE_NAME@
 Description: @PACKAGE_NAME@ development
 Version: @PACKAGE_VERSION@
-Libs: -l@PACKAGE_NAME@.static @SYSTEMD_LIBS@
+Libs: -l:lib@PACKAGE_NAME@.a @SYSTEMD_LIBS@
 Libs.private: @LIBS@ @UDJAT_LIBS@
 Cflags: -I@includedir@
 

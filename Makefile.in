@@ -258,7 +258,7 @@ install-linux-static: \
 	@$(MKDIR) $(DESTDIR)$(libdir)
 	@$(INSTALL_DATA) \
 		$(BINRLS)/lib$(PACKAGE_NAME).a \
-		$(DESTDIR)$(libdir)/lib$(PACKAGE_NAME).static.a
+		$(DESTDIR)$(libdir)/lib$(PACKAGE_NAME).a
 
 install-windows-static: \
 	$(BINRLS)/lib$(PACKAGE_NAME).a
