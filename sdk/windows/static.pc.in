@@ -6,7 +6,7 @@ includedir=@includedir@
 Name: @PACKAGE_NAME@
 Description: @PACKAGE_NAME@ development
 Version: @PACKAGE_VERSION@
-Libs: -lvmdetect
+Libs: -l:lib@PACKAGE_NAME@.a 
 Libs.private: @LIBS@
 Cflags: -I@includedir@
 
