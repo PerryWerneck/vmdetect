@@ -112,6 +112,13 @@ dynamic = shared_library(
 	include_directories: includes_dir
 )
 
+static = static_library(
+  'vmdetect', 
+  lib_src,
+	dependencies: lib_deps,
+	include_directories: includes_dir
+)
+
 executable(
 	'vmdetect',
 	[ 'src/vmdetect/vmdetect.cc' ],
