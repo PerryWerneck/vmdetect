@@ -65,13 +65,17 @@ sdk_conf.set('libdir',get_option('libdir'))
 
 configure_file(
   input : 'sdk/dynamic.pc.in',
-  output : 'vmdetect.pc',
+  output : meson.project_name() + '.pc',
+  install: true,
+  install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
 
 configure_file(
   input : 'sdk/static.pc.in',
-  output : 'vmdetect-static.pc',
+  output : meson.project_name() + '-static.pc',
+  install: true,
+  install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
 
@@ -103,11 +107,10 @@ endif
 #
 # Targets
 #
-
-# https://mesonbuild.com/Pkgconfig-module.html
 dynamic = shared_library(
   'vmdetect', 
   lib_src,
+	install: true,
 	dependencies: lib_deps,
 	include_directories: includes_dir
 )
@@ -115,6 +118,7 @@ dynamic = shared_library(
 static = static_library(
   'vmdetect', 
   lib_src,
+	install: true,
 	dependencies: lib_deps,
 	include_directories: includes_dir
 )
@@ -126,6 +130,8 @@ executable(
 	link_with : dynamic,
 	include_directories: includes_dir
 )
+
+install_subdir('src/include/vmdetect', install_dir : get_option('includedir'))
 
 
 
