@@ -90,6 +90,16 @@ sdk_conf.set('exec_prefix',get_option('prefix'))
 sdk_conf.set('includedir',get_option('includedir'))
 sdk_conf.set('libdir',get_option('libdir'))
 
+if host_machine.system() == 'windows'
+  sdk_conf.set('REQUIRES','')
+  sdk_conf.set('DYNLIBS','-lvmdetect.dll')
+  sdk_conf.set('STATICLIBS','-lvmdetect')
+else
+  sdk_conf.set('REQUIRES','dbus-1')
+  sdk_conf.set('DYNLIBS','-lvmdetect')
+  sdk_conf.set('STATICLIBS','-l:libvmdetect.a')
+endif
+
 configure_file(
   input : 'sdk/dynamic.pc.in',
   output : meson.project_name() + '.pc',

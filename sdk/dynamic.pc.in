@@ -5,5 +5,5 @@ libdir=${prefix}/@libdir@
 Name: @PACKAGE_NAME@
 Description: @PACKAGE_DESCRIPTION@
 Version: @PACKAGE_VERSION@
-Libs: -l@PACKAGE_NAME@
+Libs: @DYNLIBS@
 

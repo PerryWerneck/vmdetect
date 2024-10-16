@@ -5,6 +5,6 @@ libdir=${prefix}/@libdir@
 Name: @PACKAGE_NAME@
 Description: @PACKAGE_DESCRIPTION@
 Version: @PACKAGE_VERSION@
-Requires: dbus-1
-Libs: -l:lib@PACKAGE_NAME@.a
+Requires: @REQUIRES@
+Libs: @STATICLIBS@
 
