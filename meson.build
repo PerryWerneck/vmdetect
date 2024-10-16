@@ -111,6 +111,9 @@ if host_machine.system() == 'windows'
   lib_src += [
     'src/libvmdetect/os/windows/virtualmachine.cc'
   ]
+	lib_deps += [
+	  dependency('wmi++')
+	]
 else
   lib_src += [
     'src/libvmdetect/os/linux/virtualmachine.cc'
