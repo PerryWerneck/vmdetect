@@ -9,6 +9,17 @@ project(
 project_description = 'Detect when running under virtual machine'
 
 #
+# Versioning
+#
+pkg_version = meson.project_version()
+version_array = pkg_version.split('.')
+pkg_major_version = version_array[0].to_int()
+pkg_minor_version = version_array[1].to_int()
+pkg_micro_version = version_array[2].to_int()
+
+libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
+
+#
 # Compiler flags
 #
 cxx = meson.get_compiler('cpp')
@@ -41,15 +52,20 @@ app_conf = configuration_data()
 app_conf.set_quoted('PACKAGE_NAME', meson.project_name())
 app_conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 app_conf.set_quoted('PACKAGE_DESCRIPTION', project_description)
+app_conf.set('PACKAGE_VERSION_MAJOR', pkg_major_version)
+app_conf.set('PACKAGE_VERSION_MINOR', pkg_minor_version)
+app_conf.set('PACKAGE_VERSION_MICRO', pkg_micro_version)
 
 if cxx.compiles('#include <unistd.h>', name : 'unistd.h')
   app_conf.set('HAVE_UNISTD_H', 1)
 endif
 
-configure_file(
-  output : 'config.h', 
-  configuration : app_conf
-)
+config_src = [
+  configure_file(
+      output : 'config.h', 
+      configuration : app_conf
+  )
+]
 
 #
 # SDK
@@ -109,15 +125,17 @@ endif
 #
 dynamic = shared_library(
   'vmdetect', 
-  lib_src,
+  config_src + lib_src,
 	install: true,
+	version : libversion,
+	gnu_symbol_visibility: 'hidden',
 	dependencies: lib_deps,
 	include_directories: includes_dir
 )
 
 static = static_library(
   'vmdetect', 
-  lib_src,
+  config_src + lib_src,
 	install: true,
 	dependencies: lib_deps,
 	include_directories: includes_dir
@@ -125,7 +143,7 @@ static = static_library(
 
 executable(
 	'vmdetect',
-	[ 'src/vmdetect/vmdetect.cc' ],
+	config_src + [ 'src/vmdetect/vmdetect.cc' ],
 	install: true,
 	link_with : dynamic,
 	include_directories: includes_dir
