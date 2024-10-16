@@ -28,13 +28,17 @@ URL:			https://github.com/PerryWerneck/vmdetect.git
 Group:			Development/Libraries/C and C++
 BuildRoot:		/var/tmp/%{name}-%{version}
 
-BuildRequires:	autoconf >= 2.61
-BuildRequires:	automake
-BuildRequires:	libtool
 BuildRequires:	binutils
 BuildRequires:	coreutils
+BuildRequires:	fdupes
 BuildRequires:	gcc-c++ >= 5
-BuildRequires:	pkgconfig(libsystemd)
+BuildRequires:	pkgconfig(dbus-1)
+
+%if 0%{?suse_version} == 01500
+BuildRequires:  meson = 0.61.4
+%else
+BuildRequires:  meson
+%endif
 
 %description
 Simple command line tool designed to detect when running under virtual machine.
@@ -42,8 +46,7 @@ Simple command line tool designed to detect when running under virtual machine.
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 %define MAJOR_VERSION %(echo %{version} | cut -d. -f1)
-%define MINOR_VERSION %(echo %{version} | cut -d. -f2 | cut -d+ -f1)
-%define _libvrs %{MAJOR_VERSION}_%{MINOR_VERSION}
+%define _libvrs %{MAJOR_VERSION}
 
 %package -n lib%{name}%{_libvrs}
 Summary:    Core library for %{name}
@@ -65,18 +68,15 @@ Header files for the %{name} library.
 #---[ Build & Install ]-----------------------------------------------------------------------------------------------
 
 %prep
-%setup
-
-NOCONFIGURE=1 \
-	./autogen.sh
-
-%configure 
+%autosetup
+%meson
 
 %build
-make all
+%meson_build
 
 %install
-%makeinstall
+%meson_install
+%fdupes %buildroot
 
 %files
 %defattr(-,root,root)
@@ -86,12 +86,12 @@ make all
 %defattr(-,root,root)
 %doc README.md
 %license LICENSE
-%{_libdir}/lib%{name}.so.*
+%{_libdir}/*.so.*
 
 %files devel
 %defattr(-,root,root)
 %{_libdir}/*.so
-%exclude %{_libdir}/*.a
+%{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*.h

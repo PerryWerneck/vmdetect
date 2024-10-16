@@ -32,8 +32,7 @@ compiler_flags_common = [
 
 if enable_debug
   compiler_flags_common += [
-    '-ggdb3',
-	'-DDEBUG=1'
+	  '-DDEBUG=1'
   ]
 else
   compiler_flags_common += [
@@ -44,6 +43,18 @@ endif
 global_cxxflags = cxx.get_supported_arguments(compiler_flags_common)
 
 add_project_arguments(global_cxxflags, language: 'cpp')
+
+add_project_arguments(
+            cxx.get_supported_arguments(
+                [
+                    '-ggdb3',
+                    '-ffat-lto-objects',
+                    '-fvisibility=hidden',
+                    '-fPIC'
+                ],
+            ),
+            language: 'cpp',
+        )
 
 #
 # Configuration
