@@ -46,11 +46,13 @@ Simple command line tool designed to detect when running under virtual machine.
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 %define MAJOR_VERSION %(echo %{version} | cut -d. -f1)
+%define MINOR_VERSION %(echo %{version} | cut -d. -f2 | cut -d+ -f1) 
 %define _libvrs %{MAJOR_VERSION}
 
 %package -n lib%{name}%{_libvrs}
 Summary:    Core library for %{name}
 Group:      Development/Libraries/C and C++
+Provides:   lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
 
 %description -n lib%{name}%{_libvrs}
 C++ library designed to detect when running under virtual machine.
