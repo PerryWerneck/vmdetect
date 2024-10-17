@@ -176,14 +176,16 @@ static = static_library(
 	include_directories: includes_dir
 )
 
-py = import('python').find_installation()
-py.extension_module(
-  'virtualmachine',
-  config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
-  install: install_python,
-	link_with : static,
-	include_directories: includes_dir
-)
+if install_python
+  py = import('python').find_installation()
+  py.extension_module(
+    'virtualmachine',
+    config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
+    install: install_python,
+	  link_with : static,
+	  include_directories: includes_dir
+  )
+endif
 
 executable(
 	'vmdetect',
