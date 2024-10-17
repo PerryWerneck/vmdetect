@@ -181,6 +181,7 @@ py.extension_module(
 executable(
 	'vmdetect',
 	config_src + [ 'src/vmdetect/vmdetect.cc' ],
+  install: true,
 	link_with : dynamic,
 	include_directories: includes_dir
 )
