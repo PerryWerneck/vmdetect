@@ -16,6 +16,8 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
+%{?!python_module:%define python_module() python-%{**} python3-%{**}}
+
 Summary:		Detect when running under virtual machine
 Name:			vmdetect
 Version:		1.0
@@ -33,6 +35,7 @@ BuildRequires:	coreutils
 BuildRequires:	fdupes
 BuildRequires:	gcc-c++ >= 5
 BuildRequires:	pkgconfig(dbus-1)
+BuildRequires:  pkgconfig(python3)
 
 %if 0%{?suse_version} == 01500
 BuildRequires:  meson = 0.61.4
