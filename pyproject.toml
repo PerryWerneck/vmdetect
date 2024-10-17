@@ -2,6 +2,9 @@
 build-backend = 'mesonpy'
 requires = ['meson-python']
 
+[tool.meson-python.args]
+setup = ['-Dinstall_sdk=false', '-Dinstall_bin=false', '-Dinstall_python=true']
+
 [project]
 name = 'virtualmachine'
 version = '1.3.1'
