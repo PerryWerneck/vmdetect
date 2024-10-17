@@ -29,15 +29,7 @@ for filename in glob.glob("src/python/*.cc"):
 for filename in glob.glob("src/python/*.c"):
 	src_files.append(filename)
 
-package_version='0.1'
-with open(r'configure.ac', 'r') as fp:
-    lines = fp.readlines()
-    for line in lines:
-        if line.find('AC_INIT') != -1:
-            package_version = line.split('[')[2].split(']')[0].strip()
-            break;
-
-package_version += '.2'
+package_version='1.3.1'
 extra_compile_args.append('-DPACKAGE_VERSION=\"' + package_version + '\"')
 
 if platform.system() == 'Windows':

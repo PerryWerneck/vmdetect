@@ -169,13 +169,22 @@ static = static_library(
 	include_directories: includes_dir
 )
 
+py = import('python').find_installation(pure: false)
+py.extension_module(
+  'virtualmachine',
+  config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
+  install: true,
+	link_with : static,
+	include_directories: includes_dir
+)
+
 executable(
 	'vmdetect',
 	config_src + [ 'src/vmdetect/vmdetect.cc' ],
-	install: true,
 	link_with : dynamic,
 	include_directories: includes_dir
 )
+
 
 install_subdir('src/include/vmdetect', install_dir : get_option('includedir'))
 

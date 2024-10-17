@@ -1,0 +1,14 @@
+[build-system]
+build-backend = 'mesonpy'
+requires = ['meson-python']
+
+[project]
+name = 'our-first-project'
+version = '1.3.1'
+description = 'Identify virtual machine'
+readme = 'README.md'
+requires-python = '>=3.8'
+license = { file = 'LICENSE' }
+authors = [
+  { name = 'Perry Werneck', email = 'perry.werneck@gmail.com' },
+]
