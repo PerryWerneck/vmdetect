@@ -40,6 +40,10 @@ else
   ]
 endif
 
+compiler_flags_common += [
+  '-DHAVE_CONFIG_H=1'
+]
+
 global_cxxflags = cxx.get_supported_arguments(compiler_flags_common)
 
 add_project_arguments(global_cxxflags, language: 'cpp')
