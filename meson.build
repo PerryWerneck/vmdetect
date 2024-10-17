@@ -9,6 +9,13 @@ project(
 project_description = 'Detect when running under virtual machine'
 
 #
+# options
+#
+install_sdk = get_option('install_sdk')
+install_bin = get_option('install_bin')
+install_python = get_option('install_python')
+
+#
 # Versioning
 #
 pkg_version = meson.project_version()
@@ -107,7 +114,7 @@ endif
 configure_file(
   input : 'sdk/dynamic.pc.in',
   output : meson.project_name() + '.pc',
-  install: true,
+  install: install_sdk,
   install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
@@ -115,7 +122,7 @@ configure_file(
 configure_file(
   input : 'sdk/static.pc.in',
   output : meson.project_name() + '-static.pc',
-  install: true,
+  install: install_sdk,
   install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
@@ -154,7 +161,7 @@ endif
 dynamic = shared_library(
   'vmdetect', 
   config_src + lib_src,
-	install: true,
+	install: install_bin,
 	version : libversion,
 	gnu_symbol_visibility: 'hidden',
 	dependencies: lib_deps,
@@ -164,16 +171,16 @@ dynamic = shared_library(
 static = static_library(
   'vmdetect', 
   config_src + lib_src,
-	install: true,
+	install: install_sdk,
 	dependencies: lib_deps,
 	include_directories: includes_dir
 )
 
-py = import('python').find_installation(pure: false)
+py = import('python').find_installation()
 py.extension_module(
   'virtualmachine',
   config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
-  install: true,
+  install: install_python,
 	link_with : static,
 	include_directories: includes_dir
 )
@@ -181,12 +188,13 @@ py.extension_module(
 executable(
 	'vmdetect',
 	config_src + [ 'src/vmdetect/vmdetect.cc' ],
-  install: true,
+  install: install_bin,
 	link_with : dynamic,
 	include_directories: includes_dir
 )
 
-install_subdir('src/include/vmdetect', install_dir : get_option('includedir'))
-
+if install_sdk
+  install_subdir('src/include/vmdetect', install_dir : get_option('includedir'))
+endif
 
 

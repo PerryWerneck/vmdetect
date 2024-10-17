@@ -1,0 +1,4 @@
+option('install_sdk', type : 'boolean', value : true)
+option('install_bin', type : 'boolean', value : true)
+option('install_python', type : 'boolean', value : true)
+

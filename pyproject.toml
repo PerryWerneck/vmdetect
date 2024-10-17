@@ -12,3 +12,4 @@ license = { file = 'LICENSE' }
 authors = [
   { name = 'Perry Werneck', email = 'perry.werneck@gmail.com' },
 ]
+
