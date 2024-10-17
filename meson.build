@@ -185,7 +185,6 @@ executable(
 	include_directories: includes_dir
 )
 
-
 install_subdir('src/include/vmdetect', install_dir : get_option('includedir'))
 
 
