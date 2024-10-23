@@ -1,0 +1,9 @@
+prefix=@prefix@
+includedir=${prefix}/include
+libdir=${prefix}/@libdir@
+
+Name: @PACKAGE_NAME@
+Description: @PACKAGE_DESCRIPTION@
+Version: @PACKAGE_VERSION@
+Libs: @DYNLIBS@
+
