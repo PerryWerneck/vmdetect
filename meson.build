@@ -127,7 +127,7 @@ configure_file(
   configuration : sdk_conf
 )
 
-includes_dir = include_directories(meson.current_source_dir() + '/src/include')
+includes_dir = include_directories('src/include')
 
 #
 # Dependencies
