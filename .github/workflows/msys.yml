@@ -17,7 +17,7 @@ jobs:
         with:
           msystem: mingw64
           update: true
-          install: meson dos2unix xz mingw-w64-x86_64-gcc git pkgconf mingw-w64-x86_64-gettext gettext-devel
+          install: meson dos2unix xz mingw-w64-x86_64-gcc pkgconf mingw-w64-x86_64-gettext mingw-w64-x86_64-python gettext-devel
       - name: CI-Build
         run: |
           dos2unix PKGBUILD.mingw
