@@ -20,6 +20,5 @@ jobs:
           install: meson dos2unix xz mingw-w64-x86_64-gcc git pkgconf mingw-w64-x86_64-gettext gettext-devel
       - name: CI-Build
         run: |
-          pacman -U --noconfirm *.pkg.tar.zst
           dos2unix PKGBUILD.mingw
           makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
