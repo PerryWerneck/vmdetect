@@ -196,7 +196,7 @@ executable(
 )
 
 if install_sdk
-  install_subdir('src/include/vmdetect', install_dir : get_option('includedir'))
+  install_subdir(meson.current_source_dir() + 'src/include/vmdetect', install_dir : get_option('includedir'))
 endif
 
 
