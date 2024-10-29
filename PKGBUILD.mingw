@@ -25,7 +25,7 @@ source=()
 
 pkgver=$(grep AC_INIT "${startdir}/configure.ac" | cut -d[ -f3 | cut -d] -f1)
 pkgrel=0
-pkgdesc="Tool & Library to get SMBIOS info using an URL format"
+pkgdesc="Detect when running under virtual machine"
 url="https://github.com/PerryWerneck/${_realname}"
 arch=(i686 x86_64)
 license=(LGPL-3.0-or-later)
