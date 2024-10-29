@@ -18,7 +18,18 @@ jobs:
           msystem: mingw64
           update: true
           install: dos2unix xz mingw-w64-x86_64-gcc pkgconf mingw-w64-x86_64-gettext mingw-w64-x86_64-meson gettext-devel
+      - uses: robinraju/release-downloader@v1.7
+        with:
+          repository: "PerryWerneck/libudjat"
+          latest: true
+          fileName: "mingw-w64-x86_64-libudjat-1.2-0-x86_64.pkg.tar.zst"      
+      - uses: robinraju/release-downloader@v1.7
+        with:
+          repository: "PerryWerneck/wmi"
+          latest: true
+          fileName: "mingw-w64-x86_64-wmi++-1.0-1-x86_64.pkg.tar.zst"      
       - name: CI-Build
         run: |
+          pacman -U --noconfirm *.pkg.tar.zst
           dos2unix PKGBUILD.mingw
           makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
