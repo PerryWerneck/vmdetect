@@ -23,9 +23,8 @@ build-stamp:
 	dh_testdir
 
 	# Add here commands to compile the package.
-	NOCONFIGURE=1 ./autogen.sh 
-	./configure --prefix=/usr --disable-static
-	make all
+	meson setup --reconfigure --wipe .build
+	ninja -C .build
 	# --- end custom part for compiling
 
 	touch build-stamp
@@ -36,7 +35,7 @@ clean:
 	rm -f build-stamp
 
 	# Add here commands to clean up after the build process.
-	if [ -e Makefile ]; then make clean ; fi
+	rm -fr .build
 	# --- end custom part for cleaning up
 
 	dh_clean
@@ -47,14 +46,11 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	# Build package
-	make all
-
 	# Install library
-	make DESTDIR=$(PWD)/debian/$(PACKAGE_NAME) install-linux
+	DESTDIR=$(PWD)/debian/$(PACKAGE_NAME) meson install -C .build --tags runtime
 
 	# Install dev
-	make DESTDIR=$(PWD)/debian/$(PACKAGE_NAME)-dev install-dev
+	make DESTDIR=$(PWD)/debian/$(PACKAGE_NAME)-dev meson install -C .build --tags devel
   
 	# --- end custom part for installing
 

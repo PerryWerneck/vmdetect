@@ -4,7 +4,7 @@ Version: 1.1-0
 Binary: vmdetect
 Maintainer: Perry Werneck <perry.werneck@gmail.com>
 Architecture: any
-Build-Depends: debhelper (>= 7), autotools-dev, autoconf, automake, pkg-config, gettext, libsystemd-dev
+Build-Depends: debhelper (>= 7), meson, pkg-config, gettext, libsystemd-dev
 Standards-Version: 3.9.1.0
 DEBTRANSFORM-RELEASE: 1
 Files: 
