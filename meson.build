@@ -1,6 +1,6 @@
 project(
 	'vmdetect', 
-	['c','cpp'],
+	['cpp'],
 	version: '1.3.1',
 	default_options : ['c_std=c11', 'cpp_std=c++17'],
 	license: 'GPL-3.0-or-later',
@@ -34,7 +34,10 @@ enable_debug = get_option('debug') or get_option('buildtype').contains('debug')
 
 compiler_flags_common = [
   '-fvisibility=hidden',
-  '-fPIC'
+  '-DHAVE_CONFIG_H=1',
+  '-ggdb3',
+  '-ffat-lto-objects',
+  '-fPIC',
 	]
 
 if enable_debug
@@ -47,25 +50,7 @@ else
   ]
 endif
 
-compiler_flags_common += [
-  '-DHAVE_CONFIG_H=1'
-]
-
-global_cxxflags = cxx.get_supported_arguments(compiler_flags_common)
-
-add_project_arguments(global_cxxflags, language: 'cpp')
-
-add_project_arguments(
-            cxx.get_supported_arguments(
-                [
-                    '-ggdb3',
-                    '-ffat-lto-objects',
-                    '-fvisibility=hidden',
-                    '-fPIC'
-                ],
-            ),
-            language: 'cpp',
-        )
+add_project_arguments(cxx.get_supported_arguments(compiler_flags_common), language: 'cpp')
 
 #
 # Configuration
@@ -102,7 +87,7 @@ sdk_conf.set('includedir',get_option('includedir'))
 sdk_conf.set('libdir',get_option('libdir'))
 
 if host_machine.system() == 'windows'
-  sdk_conf.set('REQUIRES','')
+  sdk_conf.set('REQUIRES','wmi++')
   sdk_conf.set('DYNLIBS','-lvmdetect.dll')
   sdk_conf.set('STATICLIBS','-lvmdetect')
 else
