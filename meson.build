@@ -120,7 +120,7 @@ configure_file(
   configuration : sdk_conf
 )
 
-includes_dir = include_directories('src/include')
+lib_includes = ['src/include']
 
 #
 # Dependencies
@@ -149,7 +149,7 @@ if host_machine.system() == 'windows'
       'wmi/src/wmi.cpp',
       'wmi/src/wmiresult.cpp',
     ]
-    includes_dir += include_directories('wmi/include')
+    lib_includes += [ 'wmi/include' ]
   endif
 
 else
@@ -160,6 +160,8 @@ else
 	  dependency('dbus-1')
 	]
 endif
+
+includes_dir = include_directories(lib_includes)
 
 #
 # Targets
