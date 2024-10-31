@@ -24,7 +24,6 @@ pkg_major_version = version_array[0].to_int()
 pkg_minor_version = version_array[1].to_int()
 pkg_micro_version = version_array[2].to_int()
 
-libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
 
 #
 # Compiler flags
@@ -147,7 +146,7 @@ dynamic = shared_library(
   'vmdetect', 
   config_src + lib_src,
 	install: install_bin,
-	version : libversion,
+	soversion : pkg_major_version,
 	gnu_symbol_visibility: 'hidden',
 	dependencies: lib_deps,
 	include_directories: includes_dir
