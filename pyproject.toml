@@ -3,12 +3,13 @@ build-backend = 'mesonpy'
 requires = ['meson-python']
 
 [tool.meson-python.args]
-setup = ['-Dinstall_sdk=false', '-Dinstall_bin=false', '-Dinstall_python=true', '--vsenv']
+setup = ['--vsenv']
+install = ['--tags=python']
 
 [project]
 name = 'virtualmachine'
 version = '1.3.1'
-description = 'Identify virtual machine'
+description = 'Detect when running under virtual machine'
 readme = 'README.md'
 requires-python = '>=3.8'
 license = { file = 'LICENSE' }

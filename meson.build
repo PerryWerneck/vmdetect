@@ -161,6 +161,7 @@ if dependency('python3',required:false).found()
     'virtualmachine',
     config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
     install: true,
+    install_tag: 'python',
 	  link_with : static,
 	  include_directories: includes_dir
   )
