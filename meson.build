@@ -1,19 +1,12 @@
 project(
 	'vmdetect', 
-	['cpp'],
+	['c','cpp'],
 	version: '1.3.1',
 	default_options : ['c_std=c11', 'cpp_std=c++17'],
 	license: 'GPL-3.0-or-later',
 )
 
 project_description = 'Detect when running under virtual machine'
-
-#
-# options
-#
-install_sdk = get_option('install_sdk')
-install_bin = get_option('install_bin')
-install_python = get_option('install_python')
 
 #
 # Versioning
@@ -98,7 +91,7 @@ endif
 configure_file(
   input : 'sdk/dynamic.pc.in',
   output : meson.project_name() + '.pc',
-  install: install_sdk,
+  install: true,
   install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
@@ -106,7 +99,7 @@ configure_file(
 configure_file(
   input : 'sdk/static.pc.in',
   output : meson.project_name() + '-static.pc',
-  install: install_sdk,
+  install: true,
   install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
@@ -145,7 +138,7 @@ endif
 dynamic = shared_library(
   'vmdetect', 
   config_src + lib_src,
-	install: install_bin,
+	install: true,
 	soversion : pkg_major_version,
 	gnu_symbol_visibility: 'hidden',
 	dependencies: lib_deps,
@@ -155,17 +148,19 @@ dynamic = shared_library(
 static = static_library(
   'vmdetect', 
   config_src + lib_src,
-	install: install_sdk,
+	install: true,
 	dependencies: lib_deps,
 	include_directories: includes_dir
 )
 
-if install_python
-  py = import('python').find_installation()
-  py.extension_module(
+#
+# Check for python
+#
+if dependency('python3',required:false).found()
+  import('python').find_installation().extension_module(
     'virtualmachine',
     config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
-    install: install_python,
+    install: true,
 	  link_with : static,
 	  include_directories: includes_dir
   )
@@ -174,13 +169,15 @@ endif
 executable(
 	'vmdetect',
 	config_src + [ 'src/vmdetect/vmdetect.cc' ],
-  install: install_bin,
+  install: true,
 	link_with : dynamic,
 	include_directories: includes_dir
 )
 
-if install_sdk
-  install_subdir(meson.current_source_dir() + 'src/include/vmdetect', install_dir : get_option('includedir'))
-endif
+install_headers(
+  'src/include/vmdetect/defs.h', 
+  'src/include/vmdetect/virtualmachine.h', 
+  subdir: 'vmdetect'  
+)
 
 
