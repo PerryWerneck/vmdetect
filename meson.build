@@ -153,7 +153,9 @@ if host_machine.system() == 'windows'
       'wmi/src/wmiresult.cpp',
     ]
     lib_includes += [ 'wmi/include' ]
-    linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
+    if cxx.get_id() != 'msvc'
+      linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
+    endif
   endif
 
 else
