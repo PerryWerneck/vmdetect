@@ -149,6 +149,7 @@ if host_machine.system() == 'windows'
       'wmi/src/wmi.cpp',
       'wmi/src/wmiresult.cpp',
     ]
+    includes_dir += include_directories('wmi/include')
   endif
 
 else
