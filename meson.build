@@ -9,13 +9,6 @@ project(
 project_description = 'Detect when running under virtual machine'
 
 #
-# options
-#
-install_sdk = get_option('install_sdk')
-install_bin = get_option('install_bin')
-install_python = get_option('install_python')
-
-#
 # Versioning
 #
 pkg_version = meson.project_version()
@@ -114,7 +107,7 @@ endif
 configure_file(
   input : 'sdk/dynamic.pc.in',
   output : meson.project_name() + '.pc',
-  install: install_sdk,
+  install: true,
   install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
@@ -122,7 +115,7 @@ configure_file(
 configure_file(
   input : 'sdk/static.pc.in',
   output : meson.project_name() + '-static.pc',
-  install: install_sdk,
+  install: true,
   install_dir: get_option('libdir') + '/pkgconfig',
   configuration : sdk_conf
 )
@@ -140,12 +133,24 @@ lib_src = [
 ]
 
 if host_machine.system() == 'windows'
+
   lib_src += [
     'src/libvmdetect/os/windows/virtualmachine.cc'
   ]
-	lib_deps += [
-	  dependency('wmi++')
-	]
+
+  wmi = dependency('wmi++',required:false)
+  if wmi.found()
+    lib_deps += [
+      dependency('wmi++')
+    ]
+  else
+    lib_src += [
+      'wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
+      'wmi/src/wmi.cpp',
+      'wmi/src/wmiresult.cpp',
+    ]
+  endif
+
 else
   lib_src += [
     'src/libvmdetect/os/linux/virtualmachine.cc'
@@ -158,45 +163,62 @@ endif
 #
 # Targets
 #
-dynamic = shared_library(
-  'vmdetect', 
-  config_src + lib_src,
-	install: install_bin,
-	version : libversion,
-	gnu_symbol_visibility: 'hidden',
-	dependencies: lib_deps,
-	include_directories: includes_dir
-)
-
 static = static_library(
   'vmdetect', 
   config_src + lib_src,
-	install: install_sdk,
-	dependencies: lib_deps,
-	include_directories: includes_dir
+  install: true,
+  dependencies: lib_deps,
+  include_directories: includes_dir
 )
 
-if install_python
-  py = import('python').find_installation()
-  py.extension_module(
+if cxx.get_id() == 'msvc'
+
+  executable(
+    'vmdetect',
+    config_src + [ 'src/vmdetect/vmdetect.cc' ],
+    install: true,
+    link_with : static,
+    include_directories: includes_dir
+  )
+
+else
+
+  dynamic = shared_library(
+    'vmdetect', 
+    config_src + lib_src,
+    install: true,
+    version : libversion,
+    gnu_symbol_visibility: 'hidden',
+    dependencies: lib_deps,
+    include_directories: includes_dir
+  )
+
+  executable(
+    'vmdetect',
+    config_src + [ 'src/vmdetect/vmdetect.cc' ],
+    install: true,
+    link_with : dynamic,
+    include_directories: includes_dir
+  )
+
+endif
+
+#
+# Check for python
+#
+py = dependency('python3',required:false)
+if py.found()
+  import('python').find_installation().extension_module(
     'virtualmachine',
     config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
-    install: install_python,
+    install: true,
+    install_tag: 'python',
 	  link_with : static,
+    dependencies: lib_deps + [ py ],
 	  include_directories: includes_dir
   )
 endif
 
-executable(
-	'vmdetect',
-	config_src + [ 'src/vmdetect/vmdetect.cc' ],
-  install: install_bin,
-	link_with : dynamic,
-	include_directories: includes_dir
-)
-
-if install_sdk
-  install_subdir(meson.current_source_dir() + 'src/include/vmdetect', install_dir : get_option('includedir'))
-endif
+install_subdir(meson.current_source_dir() + 'src/include/vmdetect', install_dir : get_option('includedir'))
 
 
