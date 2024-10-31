@@ -25,6 +25,9 @@ libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
 cxx = meson.get_compiler('cpp')
 enable_debug = get_option('debug') or get_option('buildtype').contains('debug')
 
+linker_flags = [
+]
+
 compiler_flags_common = [
   '-fvisibility=hidden',
   '-fPIC'
@@ -150,6 +153,7 @@ if host_machine.system() == 'windows'
       'wmi/src/wmiresult.cpp',
     ]
     lib_includes += [ 'wmi/include' ]
+    linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
   endif
 
 else
@@ -171,7 +175,8 @@ static = static_library(
   config_src + lib_src,
   install: true,
   dependencies: lib_deps,
-  include_directories: includes_dir
+  include_directories: includes_dir,
+  link_args: linker_flags
 )
 
 if cxx.get_id() == 'msvc'
@@ -181,7 +186,8 @@ if cxx.get_id() == 'msvc'
     config_src + [ 'src/vmdetect/vmdetect.cc' ],
     install: true,
     link_with : static,
-    include_directories: includes_dir
+    include_directories: includes_dir,
+    link_args: linker_flags
   )
 
 else
@@ -193,7 +199,8 @@ else
     version : libversion,
     gnu_symbol_visibility: 'hidden',
     dependencies: lib_deps,
-    include_directories: includes_dir
+    include_directories: includes_dir,
+    link_args: linker_flags
   )
 
   executable(
@@ -201,7 +208,8 @@ else
     config_src + [ 'src/vmdetect/vmdetect.cc' ],
     install: true,
     link_with : dynamic,
-    include_directories: includes_dir
+    include_directories: includes_dir,
+    link_args: linker_flags
   )
 
 endif
@@ -218,7 +226,8 @@ if py.found()
     install_tag: 'python',
 	  link_with : static,
     dependencies: lib_deps + [ py ],
-	  include_directories: includes_dir
+	  include_directories: includes_dir,
+    link_args: linker_flags
   )
 endif
 
