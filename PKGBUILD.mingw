@@ -50,5 +50,5 @@ build() {
 
 package() {
   cd "$srcdir/$pkgname"
-  DESTDIR="${pkgdir}" meson install
+  DESTDIR="${pkgdir}" meson --tags devel,runtime install
 }

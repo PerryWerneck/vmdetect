@@ -156,12 +156,14 @@ static = static_library(
 #
 # Check for python
 #
-if dependency('python3',required:false).found()
+py = dependency('python3',required:false)
+if py.found()
   import('python').find_installation().extension_module(
     'virtualmachine',
     config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
     install: true,
     install_tag: 'python',
+	  dependencies: lib_deps + [ py ],
 	  link_with : static,
 	  include_directories: includes_dir
   )
