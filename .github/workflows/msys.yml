@@ -13,16 +13,13 @@ jobs:
         shell: msys2 {0}
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: true
       - uses: msys2/setup-msys2@v2
         with:
           msystem: mingw64
           update: true
-          install: dos2unix xz mingw-w64-x86_64-gcc pkgconf mingw-w64-x86_64-gettext mingw-w64-x86_64-meson gettext-devel
-      # Update references
-      - name: Git Submodule Update
-        run: |
-          git pull --recurse-submodules
-          git submodule update --remote --recursive
+          install: git dos2unix xz mingw-w64-x86_64-gcc pkgconf mingw-w64-x86_64-gettext mingw-w64-x86_64-meson gettext-devel
       - name: CI-Build
         run: |
           dos2unix PKGBUILD.mingw
