@@ -1,4 +1,4 @@
-name: check-win64
+name: wincheck
 on:
   push:
     branches: [ "win" ]
@@ -6,7 +6,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  msys2-build:
+  check-msys64:
     runs-on: windows-latest
     defaults:
       run:

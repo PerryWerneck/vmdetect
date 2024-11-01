@@ -1,0 +1,93 @@
+name: publish
+on:
+  push:
+    branches: [ "publisher" ]
+    tags:
+      - '*'
+jobs:
+  mingw64:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: oprypin/find-latest-tag@v1
+        id: gettag
+        with:
+          repository: PerryWerneck/vmdetect
+          releases-only: true
+      - name: Setup MSys
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: mingw64
+          update: true
+          install: git dos2unix xz mingw-w64-x86_64-gcc pkgconf mingw-w64-x86_64-gettext mingw-w64-x86_64-meson gettext-devel
+      - name: Run Build
+        run: |
+          dos2unix PKGBUILD.mingw
+          makepkg BUILDDIR=/tmp/pkg -p PKGBUILD.mingw
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.gettag.outputs.tag }}
+          artifacts: "*.pkg.tar.zst"
+          allowUpdates: true
+          draft: false
+          makeLatest: true
+          omitBody: true
+          omitPrereleaseDuringUpdate: true
+          replacesArtifacts: true
+#  msvc:
+#    # https://dvdhrm.github.io/2021/04/21/meson-msvc-github-actions/
+#    runs-on: windows-latest
+#    steps:
+#      - name: Fetch Sources
+#        uses: actions/checkout@v3
+#        with:
+#          submodules: true
+#      - name: Setup Python
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: '3.x'
+#      - name: Install Python Dependencies
+#        run: pip install meson ninja
+#      - name: Prepare MSVC
+#        uses: bus1/cabuild/action/msdevshell@v1
+#        with:
+#          architecture: x64
+#      - name: Prepare Build
+#        run: meson setup --sbindir=bin build
+#      - name: Build
+#        run: meson compile -v -C build vmdetect:executable
+#      - name: Install
+#        run: meson install --no-rebuild --destdir=package --tags=runtime -C build
+#      - name: Pack
+#        run: |
+#          cd build\package
+#          7z a -r ..\..\msvc-vmdetect-x86_64.zip .
+  pypi:
+    runs-on: ubuntu-latest
+    name: Publish to pypi
+    environment:
+      name: pypi
+      url: https://pypi.org/p/smbios
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing      
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes python3-dev libdbus-1-dev
+      - name: Install Python Dependencies
+        run: pip install meson ninja build
+      - name: Build package
+        run: python3 -m build -s
+      - name: Publishing package
+        uses: pypa/gh-action-pypi-publish@release/v1
