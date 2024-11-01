@@ -28,40 +28,30 @@ enable_debug = get_option('debug') or get_option('buildtype').contains('debug')
 linker_flags = [
 ]
 
-compiler_flags_common = [
+compiler_flags = [
+  '-fvisibility=hidden',
+  '-fPIC',
+  '-ggdb3',
+  '-ffat-lto-objects',
   '-fvisibility=hidden',
   '-fPIC'
 	]
 
 if enable_debug
-  compiler_flags_common += [
+  compiler_flags += [
 	  '-DDEBUG=1'
   ]
 else
-  compiler_flags_common += [
+  compiler_flags += [
 	'-DNDEBUG=1'
   ]
 endif
 
-compiler_flags_common += [
+compiler_flags += [
   '-DHAVE_CONFIG_H=1'
 ]
 
-global_cxxflags = cxx.get_supported_arguments(compiler_flags_common)
-
-add_project_arguments(global_cxxflags, language: 'cpp')
-
-add_project_arguments(
-            cxx.get_supported_arguments(
-                [
-                    '-ggdb3',
-                    '-ffat-lto-objects',
-                    '-fvisibility=hidden',
-                    '-fPIC'
-                ],
-            ),
-            language: 'cpp',
-        )
+add_project_arguments(cxx.get_supported_arguments(compiler_flags), language: 'cpp')
 
 #
 # Configuration
