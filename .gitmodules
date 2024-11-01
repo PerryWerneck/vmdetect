@@ -1,3 +1,3 @@
 [submodule "wmi"]
 	path = wmi
-	url = https://github.com/Thomas-Sparber/wmi.git
+	url = git@github.com:PerryWerneck/wmi.git
