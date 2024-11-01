@@ -55,8 +55,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Fix for old meson
-      run: cp meson.options meson_options.txt
+    - name: Install Packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install --yes python3-dev
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
