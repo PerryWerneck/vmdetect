@@ -235,6 +235,10 @@ if not meson.is_cross_build()
   endif
 endif
 
-install_subdir(meson.current_source_dir() + 'src/include/vmdetect', install_dir : get_option('includedir'))
+install_headers(
+  'src/include/vmdetect/defs.h', 
+  'src/include/vmdetect/virtualmachine.h', 
+  subdir: 'vmdetect'  
+)
 
 
