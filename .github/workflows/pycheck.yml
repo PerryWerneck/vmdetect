@@ -12,6 +12,12 @@ jobs:
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes python3-dev dbus1-dev
       - name: Install Python Dependencies
         run: pip install meson ninja
       - name: Build package
@@ -23,6 +29,8 @@ jobs:
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
