@@ -33,6 +33,8 @@ jobs:
     steps:
       - name: Fetch Sources
         uses: actions/checkout@v3
+        with:
+          submodules: true
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
