@@ -17,6 +17,7 @@ pkg_major_version = version_array[0].to_int()
 pkg_minor_version = version_array[1].to_int()
 pkg_micro_version = version_array[2].to_int()
 
+libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
 
 #
 # Compiler flags
@@ -24,25 +25,33 @@ pkg_micro_version = version_array[2].to_int()
 cxx = meson.get_compiler('cpp')
 enable_debug = get_option('debug') or get_option('buildtype').contains('debug')
 
-compiler_flags_common = [
+linker_flags = [
+]
+
+compiler_flags = [
   '-fvisibility=hidden',
-  '-DHAVE_CONFIG_H=1',
+  '-fPIC',
   '-ggdb3',
   '-ffat-lto-objects',
-  '-fPIC',
+  '-fvisibility=hidden',
+  '-fPIC'
 	]
 
 if enable_debug
-  compiler_flags_common += [
+  compiler_flags += [
 	  '-DDEBUG=1'
   ]
 else
-  compiler_flags_common += [
+  compiler_flags += [
 	'-DNDEBUG=1'
   ]
 endif
 
-add_project_arguments(cxx.get_supported_arguments(compiler_flags_common), language: 'cpp')
+compiler_flags += [
+  '-DHAVE_CONFIG_H=1'
+]
+
+add_project_arguments(cxx.get_supported_arguments(compiler_flags), language: 'cpp')
 
 #
 # Configuration
@@ -79,7 +88,7 @@ sdk_conf.set('includedir',get_option('includedir'))
 sdk_conf.set('libdir',get_option('libdir'))
 
 if host_machine.system() == 'windows'
-  sdk_conf.set('REQUIRES','wmi++')
+  sdk_conf.set('REQUIRES','')
   sdk_conf.set('DYNLIBS','-lvmdetect.dll')
   sdk_conf.set('STATICLIBS','-lvmdetect')
 else
@@ -104,7 +113,7 @@ configure_file(
   configuration : sdk_conf
 )
 
-includes_dir = include_directories('src/include')
+lib_includes = ['src/include']
 
 #
 # Dependencies
@@ -117,12 +126,28 @@ lib_src = [
 ]
 
 if host_machine.system() == 'windows'
+
   lib_src += [
     'src/libvmdetect/os/windows/virtualmachine.cc'
   ]
-	lib_deps += [
-	  dependency('wmi++')
-	]
+
+  wmi = dependency('wmi++',required:false)
+  if wmi.found()
+    lib_deps += [
+      dependency('wmi++')
+    ]
+  else
+    lib_src += [
+      'wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
+      'wmi/src/wmi.cpp',
+      'wmi/src/wmiresult.cpp',
+    ]
+    lib_includes += [ 'wmi/include' ]
+    if cxx.get_id() != 'msvc'
+      linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
+    endif
+  endif
+
 else
   lib_src += [
     'src/libvmdetect/os/linux/virtualmachine.cc'
@@ -132,50 +157,73 @@ else
 	]
 endif
 
+includes_dir = include_directories(lib_includes)
+
 #
 # Targets
 #
-dynamic = shared_library(
-  'vmdetect', 
-  config_src + lib_src,
-	install: true,
-	soversion : pkg_major_version,
-	gnu_symbol_visibility: 'hidden',
-	dependencies: lib_deps,
-	include_directories: includes_dir
-)
-
 static = static_library(
   'vmdetect', 
   config_src + lib_src,
-	install: true,
-	dependencies: lib_deps,
-	include_directories: includes_dir
+  install: true,
+  dependencies: lib_deps,
+  include_directories: includes_dir,
+  link_args: linker_flags
 )
+
+if cxx.get_id() == 'msvc'
+
+  executable(
+    'vmdetect',
+    config_src + [ 'src/vmdetect/vmdetect.cc' ],
+    install: true,
+    link_with : static,
+    include_directories: includes_dir,
+    link_args: linker_flags
+  )
+
+else
+
+  dynamic = shared_library(
+    'vmdetect', 
+    config_src + lib_src,
+    install: true,
+    version : libversion,
+    gnu_symbol_visibility: 'hidden',
+    dependencies: lib_deps,
+    include_directories: includes_dir,
+    link_args: linker_flags
+  )
+
+  executable(
+    'vmdetect',
+    config_src + [ 'src/vmdetect/vmdetect.cc' ],
+    install: true,
+    link_with : dynamic,
+    include_directories: includes_dir,
+    link_args: linker_flags
+  )
+
+endif
 
 #
 # Check for python
 #
-py = dependency('python3',required:false)
-if py.found()
-  import('python').find_installation().extension_module(
-    'virtualmachine',
-    config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
-    install: true,
-    install_tag: 'python',
-	  dependencies: lib_deps + [ py ],
-	  link_with : static,
-	  include_directories: includes_dir
-  )
+if not meson.is_cross_build()
+  py = dependency('python3',required:false)
+  if py.found()
+    import('python').find_installation().extension_module(
+      'virtualmachine',
+      config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
+      install: true,
+      install_tag: 'python',
+      link_with : static,
+      dependencies: lib_deps + [ py ],
+      include_directories: includes_dir,
+      link_args: linker_flags
+    )
+  endif
 endif
-
-executable(
-	'vmdetect',
-	config_src + [ 'src/vmdetect/vmdetect.cc' ],
-  install: true,
-	link_with : dynamic,
-	include_directories: includes_dir
-)
 
 install_headers(
   'src/include/vmdetect/defs.h', 
