@@ -219,18 +219,20 @@ endif
 #
 # Check for python
 #
-py = dependency('python3',required:false)
-if py.found()
-  import('python').find_installation().extension_module(
-    'virtualmachine',
-    config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
-    install: true,
-    install_tag: 'python',
-	  link_with : static,
-    dependencies: lib_deps + [ py ],
-	  include_directories: includes_dir,
-    link_args: linker_flags
-  )
+if not meson.is_cross_build()
+  py = dependency('python3',required:false)
+  if py.found()
+    import('python').find_installation().extension_module(
+      'virtualmachine',
+      config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
+      install: true,
+      install_tag: 'python',
+      link_with : static,
+      dependencies: lib_deps + [ py ],
+      include_directories: includes_dir,
+      link_args: linker_flags
+    )
+  endif
 endif
 
 install_subdir(meson.current_source_dir() + 'src/include/vmdetect', install_dir : get_option('includedir'))
