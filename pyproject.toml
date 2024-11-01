@@ -8,7 +8,7 @@ install = ['--tags=python']
 
 [project]
 name = 'virtualmachine'
-version = '1.3.1'
+version = '1.3.3'
 description = 'Detect when running under virtual machine'
 readme = 'README.md'
 requires-python = '>=3.8'
