@@ -57,8 +57,6 @@ ABOUT-NLS
 intl
 libtool
 m4
-po
-
 
 # CodeBlocks
 *.layout

@@ -225,10 +225,5 @@ if not meson.is_cross_build()
   endif
 endif
 
-install_headers(
-  'src/include/vmdetect/defs.h', 
-  'src/include/vmdetect/virtualmachine.h', 
-  subdir: 'vmdetect'  
-)
 
 

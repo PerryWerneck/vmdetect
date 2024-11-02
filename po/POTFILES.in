@@ -1,0 +1,5 @@
+src/libvmdetect/common.cc
+src/libvmdetect/os/linux/virtualmachine.cc
+src/libvmdetect/os/windows/virtualmachine.cc
+src/python/get.cc
+src/vmdetect/vmdetect.cc
