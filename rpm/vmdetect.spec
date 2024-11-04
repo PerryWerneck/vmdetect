@@ -1,8 +1,7 @@
 #
 # spec file for package vmdetect
 #
-# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
-# Copyright (C) <2008> <Banco do Brasil S.A.>
+# Copyright (c) 2024 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -31,8 +30,14 @@ BuildRoot:		/var/tmp/%{name}-%{version}
 BuildRequires:	binutils
 BuildRequires:	coreutils
 BuildRequires:	fdupes
+
+%if "%{_vendor}" == "debbuild"
+BuildRequires:	libdbus-1-dev
+BuildRequires:  meson-deb-macros
+%else
 BuildRequires:	gcc-c++ >= 5
 BuildRequires:	pkgconfig(dbus-1)
+%endif
 
 %if 0%{?suse_version} == 01500
 BuildRequires:  meson = 0.61.4
@@ -64,6 +69,11 @@ Summary:    C++ development files for lib%{name}
 Requires:   lib%{name}%{_libvrs} = %{version}
 Group:      Development/Libraries/C and C++
 
+%if "%{_vendor}" == "debbuild"
+Provides:	pkgconfig(%{name}) = %{version}
+Provides:	%{name}-dev = %{version}
+%endif
+
 %description devel
 Header files for the %{name} library.
 
@@ -71,10 +81,6 @@ Header files for the %{name} library.
 
 %prep
 %autosetup
-
-# For versions of meson before 1.1
-ln meson.options meson_options.txt
-
 %meson
 
 %build
@@ -82,20 +88,28 @@ ln meson.options meson_options.txt
 
 %install
 %meson_install
+
+%if "%{_vendor}" != "debbuild"
 %fdupes %buildroot
+%endif
 
 %files
 %defattr(-,root,root)
+%doc README.md
+%license LICENSE
 %{_bindir}/vmdetect
 
 %files -n lib%{name}%{_libvrs}
 %defattr(-,root,root)
 %doc README.md
 %license LICENSE
-%{_libdir}/*.so.*
+%{_libdir}/*.so.%{MAJOR_VERSION}.%{MINOR_VERSION}
 
 %files devel
 %defattr(-,root,root)
+%doc README.md
+%license LICENSE
+%{_libdir}/*.so.%{MAJOR_VERSION}
 %{_libdir}/*.so
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
