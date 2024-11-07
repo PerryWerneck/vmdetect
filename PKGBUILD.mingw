@@ -40,7 +40,12 @@ prepare() {
   rm -fr "$srcdir/$pkgname"
   mkdir -p "$srcdir/$pkgname"
   cd ${startdir}
-  meson setup --reconfigure --wipe "$srcdir/$pkgname"
+  meson \
+    setup \
+      --prefix=/c/${MINGW_PREFIX} \
+      --reconfigure \
+      --wipe \
+      "$srcdir/$pkgname"
 }
 
 build() {

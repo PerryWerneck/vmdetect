@@ -96,41 +96,44 @@ config_src = [
 
 #
 # SDK
+# https://mesonbuild.com/Pkgconfig-module.html
 #
-sdk_conf = configuration_data()
-sdk_conf.set('PACKAGE_NAME', meson.project_name())
-sdk_conf.set('PACKAGE_VERSION', meson.project_version())
-sdk_conf.set('PACKAGE_DESCRIPTION', project_description)
-sdk_conf.set('prefix',get_option('prefix'))
-sdk_conf.set('exec_prefix',get_option('prefix'))
-sdk_conf.set('includedir',get_option('includedir'))
-sdk_conf.set('libdir',get_option('libdir'))
+if cxx.get_id() != 'msvc'
 
-if host_machine.system() == 'windows'
-  sdk_conf.set('REQUIRES','')
-  sdk_conf.set('DYNLIBS','-lvmdetect.dll')
-  sdk_conf.set('STATICLIBS','-lvmdetect')
-else
-  sdk_conf.set('REQUIRES','dbus-1')
-  sdk_conf.set('DYNLIBS','-lvmdetect')
-  sdk_conf.set('STATICLIBS','-l:libvmdetect.a')
+  pkg = import('pkgconfig')
+
+  if host_machine.system() == 'windows'
+
+    pkg.generate(
+      name: meson.project_name(),
+      description: project_description,
+      libraries: [ '-lvmdetect.dll' ]
+    )
+
+    pkg.generate(
+      name: meson.project_name() + '-static',
+      description: project_description,
+      libraries: [ '-lvmdetect' ]
+    )
+
+  else
+
+    pkg.generate(
+      name: meson.project_name(),
+      description: project_description,
+      libraries: [ '-lvmdetect' ]
+    )
+
+    pkg.generate(
+      name: meson.project_name() + '-static',
+      description: project_description,
+      libraries: [ '-l:libvmdetect.a' ],
+      requires: [ 'dbus-1' ],
+    )
+
+  endif
+
 endif
-
-configure_file(
-  input : 'sdk/dynamic.pc.in',
-  output : meson.project_name() + '.pc',
-  install: true,
-  install_dir: get_option('libdir') + '/pkgconfig',
-  configuration : sdk_conf
-)
-
-configure_file(
-  input : 'sdk/static.pc.in',
-  output : meson.project_name() + '-static.pc',
-  install: true,
-  install_dir: get_option('libdir') + '/pkgconfig',
-  configuration : sdk_conf
-)
 
 lib_includes = ['src/include']
 
