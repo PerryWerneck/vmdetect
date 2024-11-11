@@ -83,6 +83,9 @@ app_conf.set('PACKAGE_VERSION_MAJOR', pkg_major_version)
 app_conf.set('PACKAGE_VERSION_MINOR', pkg_minor_version)
 app_conf.set('PACKAGE_VERSION_MICRO', pkg_micro_version)
 
+app_conf.set('PRODUCT_NAME', meson.project_name())
+app_conf.set('PRODUCT_VERSION', meson.project_version())
+
 if cxx.compiles('#include <unistd.h>', name : 'unistd.h')
   app_conf.set('HAVE_UNISTD_H', 1)
 endif
@@ -147,7 +150,24 @@ lib_src = [
   'src/libvmdetect/common.cc'
 ]
 
+app_src = [ 
+  'src/vmdetect/vmdetect.cc' 
+]
+
 if host_machine.system() == 'windows'
+
+  # https://mesonbuild.com/Windows-module.html
+  windows = import('windows')
+  resources = windows.compile_resources(
+    configure_file(
+      input : 'src/libvmdetect/os/windows/resources.rc.in',
+      output : 'resources.rc',
+      configuration : app_conf
+    )
+  )
+
+  lib_src += resources
+  app_src += resources
 
   lib_src += [
     'src/libvmdetect/os/windows/virtualmachine.cc'
@@ -197,7 +217,7 @@ if cxx.get_id() == 'msvc'
 
   executable(
     'vmdetect',
-    config_src + [ 'src/vmdetect/vmdetect.cc' ],
+    config_src + app_src,
     install: true,
     link_with : static,
     include_directories: includes_dir,
@@ -219,7 +239,7 @@ else
 
   executable(
     'vmdetect',
-    config_src + [ 'src/vmdetect/vmdetect.cc' ],
+    config_src + app_src,
     install: true,
     link_with : dynamic,
     include_directories: includes_dir,
