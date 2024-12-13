@@ -97,47 +97,6 @@ config_src = [
   )
 ]
 
-#
-# SDK
-# https://mesonbuild.com/Pkgconfig-module.html
-#
-if cxx.get_id() != 'msvc'
-
-  pkg = import('pkgconfig')
-
-  if host_machine.system() == 'windows'
-
-    pkg.generate(
-      name: meson.project_name(),
-      description: project_description,
-      libraries: [ '-lvmdetect.dll' ]
-    )
-
-    pkg.generate(
-      name: meson.project_name() + '-static',
-      description: project_description,
-      libraries: [ '-lvmdetect' ]
-    )
-
-  else
-
-    pkg.generate(
-      name: meson.project_name(),
-      description: project_description,
-      libraries: [ '-lvmdetect' ]
-    )
-
-    pkg.generate(
-      name: meson.project_name() + '-static',
-      description: project_description,
-      libraries: [ '-l:libvmdetect.a' ],
-      requires: [ 'dbus-1' ],
-    )
-
-  endif
-
-endif
-
 lib_includes = ['src/include']
 
 #
@@ -202,6 +161,48 @@ endif
 includes_dir = include_directories(lib_includes)
 
 #
+# SDK
+# https://mesonbuild.com/Pkgconfig-module.html
+#
+if cxx.get_id() != 'msvc'
+
+  pkg = import('pkgconfig')
+
+  if host_machine.system() == 'windows'
+
+    pkg.generate(
+      name: meson.project_name(),
+      description: project_description,
+      libraries: [ '-lvmdetect.dll' ]
+    )
+
+    pkg.generate(
+      name: meson.project_name() + '-static',
+      description: project_description,
+      libraries: [ '-lvmdetect' ],
+      requires: [ lib_deps ],
+    )
+
+  else
+
+    pkg.generate(
+      name: meson.project_name(),
+      description: project_description,
+      libraries: [ '-lvmdetect' ]
+    )
+
+    pkg.generate(
+      name: meson.project_name() + '-static',
+      description: project_description,
+      libraries: [ '-l:libvmdetect.a' ],
+      requires: [ lib_deps ],
+    )
+
+  endif
+
+endif
+
+#
 # Targets
 #
 static = static_library(
@@ -261,7 +262,7 @@ install_headers(
 # Check for python
 #
 if not meson.is_cross_build()
-  py = dependency('python3',required:false)
+  py = dependency('python3',required:false,method:'pkg-config')
   if py.found()
     import('python').find_installation().extension_module(
       'virtualmachine',

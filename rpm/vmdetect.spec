@@ -17,7 +17,7 @@
 
 Summary:		Detect when running under virtual machine
 Name:			vmdetect
-Version: 1.3.3
+Version:		1.0
 Release:		0
 License:		LGPL-3.0
 Source:			%{name}-%{version}.tar.xz
@@ -32,18 +32,15 @@ BuildRequires:	coreutils
 BuildRequires:	fdupes
 
 %if "%{_vendor}" == "debbuild"
-BuildRequires:	libdbus-1-dev
 BuildRequires:  meson-deb-macros
+BuildRequires:	python3-dev
+BuildRequires:	libdbus-1-dev
 %else
 BuildRequires:	gcc-c++ >= 5
 BuildRequires:	pkgconfig(dbus-1)
 %endif
 
-%if 0%{?suse_version} == 01500
-BuildRequires:  meson = 0.61.4
-%else
-BuildRequires:  meson
-%endif
+BuildRequires:  meson >= 0.61.4
 
 %description
 Simple command line tool designed to detect when running under virtual machine.
@@ -55,9 +52,13 @@ Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 %define _libvrs %{MAJOR_VERSION}
 
 %package -n lib%{name}%{_libvrs}
-Summary:    Core library for %{name}
-Group:      Development/Libraries/C and C++
-Provides:   lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
+Summary:	Core library for %{name}
+Group:		Development/Libraries/C and C++
+Provides:	lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
+
+%if "%{_vendor}" == "debbuild"
+Depends:	${misc:Depends}, ${shlibs:Depends}  
+%endif
 
 %description -n lib%{name}%{_libvrs}
 C++ library designed to detect when running under virtual machine.
@@ -65,13 +66,12 @@ C++ library designed to detect when running under virtual machine.
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 %package devel
-Summary:    C++ development files for lib%{name}
-Requires:   lib%{name}%{_libvrs} = %{version}
-Group:      Development/Libraries/C and C++
+Summary:	C++ development files for lib%{name}
+Requires:	lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
+Group:		Development/Libraries/C and C++
 
 %if "%{_vendor}" == "debbuild"
-Provides:	pkgconfig(%{name}) = %{version}
-Provides:	%{name}-dev = %{version}
+Provides:	lib%{name}-dev
 %endif
 
 %description devel

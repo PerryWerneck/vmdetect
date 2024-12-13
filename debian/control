@@ -1,0 +1,28 @@
+Source: vmdetect
+Section: unknown
+Priority: optional
+Maintainer: Perry Werneck <perry.werneck@gmail.com>
+Build-Depends: debhelper (>= 7), meson, pkg-config, python3-dev, libdbus-1-dev
+
+Package: vmdetect
+Architecture: any
+Section: libs
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Provides: vmdetect (= ${binary:Version}), libvmdetect (= ${binary:Version})
+Description: Tool & library to detect virtual machine.
+ Detect when running under virtual machine.
+
+Package: vmdetect-dev
+Architecture: any
+Provides: vmdetect-dev (= ${binary:Version}), libvmdetect-dev (= ${binary:Version})
+Section: libdevel
+Depends: ${misc:Depends}, pkg-config, vmdetect (= ${binary:Version})
+Description: libvmdetect development files.
+ Detect when running under virtual machine
+
+Package: vmdetect-dbg
+Architecture: any
+Depends: vmdetect (= ${binary:Version})
+Description: Debugging symbols for vmdetect
+ This package contains the debugging symbols for vmdetect.
+
