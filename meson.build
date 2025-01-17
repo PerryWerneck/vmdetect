@@ -20,7 +20,7 @@
 project(
 	'vmdetect', 
 	['c','cpp'],
-	version: '1.3.3',
+	version: '1.3.4',
 	default_options : ['c_std=c11', 'cpp_std=c++17'],
 	license: 'GPL-3.0-or-later',
 )
@@ -90,6 +90,11 @@ if cxx.compiles('#include <unistd.h>', name : 'unistd.h')
   app_conf.set('HAVE_UNISTD_H', 1)
 endif
 
+dbus = dependency('dbus-1',required:false)
+if dbus.found()
+  app_conf.set('HAVE_DBUS', 1)  
+endif
+
 config_src = [
   configure_file(
       output : 'config.h', 
@@ -103,6 +108,7 @@ lib_includes = ['src/include']
 # Dependencies
 #
 lib_deps = [
+  dbus
 ]
 
 lib_src = [
@@ -153,9 +159,7 @@ else
   lib_src += [
     'src/libvmdetect/os/linux/virtualmachine.cc'
   ]
-	lib_deps += [
-	  dependency('dbus-1')
-	]
+
 endif
 
 includes_dir = include_directories(lib_includes)
