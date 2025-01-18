@@ -9,7 +9,7 @@ url="https://github.com/PerryWerneck/vmdetect.git"
 arch=(i686 x86_64)
 license=(GPL)
 depends=()
-makedepends=(autoconf automake make libtool gzip)
+makedepends=(meson make gzip)
 checkdepends=()
 
 #groups=(gnome)

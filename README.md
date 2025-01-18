@@ -1,11 +1,12 @@
 # vmdetect
 
-C++/python libraries and simple command line tool designed to detect when running under virtual machine.
+A comprehensive toolkit for detecting virtual machine environments. Available as a cross-platform library (Python, C, C++) and command-line tool for Windows and Linux, it employs multiple techniques to reliably identify various virtualization platforms (e.g., VMware, VirtualBox, Hyper-V, QEMU).
 
 Based on py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 ![Platform: Linux/Windows](https://img.shields.io/badge/Platform-Linux/Windows-blue.svg)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![CodeQL Advanced](https://github.com/PerryWerneck/vmdetect/actions/workflows/codeql.yml/badge.svg)](https://github.com/PerryWerneck/vmdetect/actions/workflows/codeql.yml)
 [![build result](https://build.opensuse.org/projects/home:PerryWerneck:udjat/packages/vmdetect/badge.svg?type=percent)](https://build.opensuse.org/package/show/home:PerryWerneck:udjat/vmdetect)
 [![PyPI version](https://badge.fury.io/py/virtualmachine.svg)](https://badge.fury.io/py/virtualmachine)
 

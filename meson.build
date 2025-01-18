@@ -39,6 +39,11 @@ pkg_micro_version = version_array[2].to_int()
 libversion = '@0@.@1@'.format(pkg_major_version,pkg_minor_version)
 
 #
+# i18n
+#
+#subdir('po')
+
+#
 # Compiler flags
 #
 cxx = meson.get_compiler('cpp')

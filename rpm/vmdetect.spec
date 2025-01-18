@@ -15,9 +15,9 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-Summary:		Detect when running under virtual machine
+Summary:		Detect virtual machine environments
 Name:			vmdetect
-Version: 1.3.4
+Version:		1.0
 Release:		0
 License:		LGPL-3.0
 Source:			%{name}-%{version}.tar.xz
@@ -27,23 +27,17 @@ URL:			https://github.com/PerryWerneck/vmdetect.git
 Group:			Development/Libraries/C and C++
 BuildRoot:		/var/tmp/%{name}-%{version}
 
-BuildRequires:	binutils
-BuildRequires:	coreutils
 BuildRequires:	fdupes
-
-%if "%{_vendor}" == "debbuild"
-BuildRequires:  meson-deb-macros
-BuildRequires:	python3-dev
-BuildRequires:	libdbus-1-dev
-%else
 BuildRequires:	gcc-c++ >= 5
 BuildRequires:	pkgconfig(dbus-1)
-%endif
-
-BuildRequires:  meson >= 0.61.4
+BuildRequires:	meson >= 0.61.4
 
 %description
-Simple command line tool designed to detect when running under virtual machine.
+A comprehensive toolkit for detecting virtual machine environments. 
+Available as a cross-platform library (Python, C, C++) and command-line 
+tool for Windows and Linux, it employs multiple techniques to reliably 
+identify various virtualization platforms (e.g., VMware, VirtualBox, 
+Hyper-V, QEMU).
 
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
@@ -56,12 +50,10 @@ Summary:	Core library for %{name}
 Group:		Development/Libraries/C and C++
 Provides:	lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
 
-%if "%{_vendor}" == "debbuild"
-Depends:	${misc:Depends}, ${shlibs:Depends}  
-%endif
-
 %description -n lib%{name}%{_libvrs}
-C++ library designed to detect when running under virtual machine.
+A cross-platform library (Python, C, C++) for Windows and Linux, 
+employing multiple techniques to reliably identify various 
+virtualization platforms (e.g., VMware, VirtualBox, Hyper-V, QEMU).
 
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
@@ -70,12 +62,11 @@ Summary:	C++ development files for lib%{name}
 Requires:	lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
 Group:		Development/Libraries/C and C++
 
-%if "%{_vendor}" == "debbuild"
-Provides:	lib%{name}-dev
-%endif
-
 %description devel
-Header files for the %{name} library.
+Development files for %{name} a cross-platform library to identify virtual machines 
+on Windows and Linux.
+
+Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 #---[ Build & Install ]-----------------------------------------------------------------------------------------------
 
@@ -88,10 +79,6 @@ Header files for the %{name} library.
 
 %install
 %meson_install
-
-%if "%{_vendor}" != "debbuild"
-%fdupes %buildroot
-%endif
 
 %files
 %defattr(-,root,root)
