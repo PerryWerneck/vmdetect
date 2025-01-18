@@ -1,0 +1,3 @@
+[submodule "wmi"]
+	path = wmi
+	url = https://github.com/PerryWerneck/wmi.git

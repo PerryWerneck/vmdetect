@@ -1,0 +1,47 @@
+name: py-check
+on:
+  push:
+    branches: [ "python" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  pycheck-linux:
+    runs-on: ubuntu-latest
+    name: Check linux python build
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install Packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes python3-dev libdbus-1-dev
+      - name: Install Python Dependencies
+        run: pip install meson ninja
+      - name: Build package
+        run: |
+          pip wheel .
+  pycheck-windows:
+    runs-on: windows-latest
+    name: Check windows python build
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      - name: Install Python Dependencies
+        run: pip install meson ninja
+      - name: Prepare MSVC
+        uses: bus1/cabuild/action/msdevshell@v1
+        with:
+          architecture: x64
+      - name: Build package
+        run: |
+          pip wheel .
+

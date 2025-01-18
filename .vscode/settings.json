@@ -1,4 +1,5 @@
 {
 	"C_Cpp.default.compileCommands": "/home/perry/project/udjat/vmdetect/.build/compile_commands.json",
-	"C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild"
+	"C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
+	"cmake.sourceDirectory": "/home/perry/project/udjat/vmdetect/wmi"
 }

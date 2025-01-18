@@ -1,8 +1,7 @@
 #
 # spec file for package vmdetect
 #
-# Copyright (c) 2015 SUSE LINUX GmbH, Nuernberg, Germany.
-# Copyright (C) <2008> <Banco do Brasil S.A.>
+# Copyright (c) 2024 SUSE LINUX GmbH, Nuernberg, Germany.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -16,9 +15,9 @@
 # Please submit bugfixes or comments via http://bugs.opensuse.org/
 #
 
-Summary:		Detect when running under virtual machine
+Summary:		Detect virtual machine environments
 Name:			vmdetect
-Version:		1.0
+Version:		1.3.4+git20250117
 Release:		0
 License:		LGPL-3.0
 Source:			%{name}-%{version}.tar.xz
@@ -28,20 +27,17 @@ URL:			https://github.com/PerryWerneck/vmdetect.git
 Group:			Development/Libraries/C and C++
 BuildRoot:		/var/tmp/%{name}-%{version}
 
-BuildRequires:	binutils
-BuildRequires:	coreutils
 BuildRequires:	fdupes
 BuildRequires:	gcc-c++ >= 5
 BuildRequires:	pkgconfig(dbus-1)
-
-%if 0%{?suse_version} == 01500
-BuildRequires:  meson = 0.61.4
-%else
-BuildRequires:  meson
-%endif
+BuildRequires:	meson >= 0.61.4
 
 %description
-Simple command line tool designed to detect when running under virtual machine.
+A comprehensive toolkit for detecting virtual machine environments. 
+Available as a cross-platform library (Python, C, C++) and command-line 
+tool for Windows and Linux, it employs multiple techniques to reliably 
+identify various virtualization platforms (e.g., VMware, VirtualBox, 
+Hyper-V, QEMU).
 
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
@@ -50,31 +46,32 @@ Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 %define _libvrs %{MAJOR_VERSION}
 
 %package -n lib%{name}%{_libvrs}
-Summary:    Core library for %{name}
-Group:      Development/Libraries/C and C++
-Provides:   lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
+Summary:	Core library for %{name}
+Group:		Development/Libraries/C and C++
+Provides:	lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
 
 %description -n lib%{name}%{_libvrs}
-C++ library designed to detect when running under virtual machine.
+A cross-platform library (Python, C, C++) for Windows and Linux, 
+employing multiple techniques to reliably identify various 
+virtualization platforms (e.g., VMware, VirtualBox, Hyper-V, QEMU).
 
 Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 %package devel
-Summary:    C++ development files for lib%{name}
-Requires:   lib%{name}%{_libvrs} = %{version}
-Group:      Development/Libraries/C and C++
+Summary:	C++ development files for lib%{name}
+Requires:	lib%{name}%{MAJOR_VERSION}_%{MINOR_VERSION} = %{version}
+Group:		Development/Libraries/C and C++
 
 %description devel
-Header files for the %{name} library.
+Development files for %{name} a cross-platform library to identify virtual machines 
+on Windows and Linux.
+
+Based py_vmdetect sources from https://github.com/kepsic/py_vmdetect
 
 #---[ Build & Install ]-----------------------------------------------------------------------------------------------
 
 %prep
 %autosetup
-
-# For versions of meson before 1.1
-ln meson.options meson_options.txt
-
 %meson
 
 %build
@@ -82,20 +79,24 @@ ln meson.options meson_options.txt
 
 %install
 %meson_install
-%fdupes %buildroot
 
 %files
 %defattr(-,root,root)
+%doc README.md
+%license LICENSE
 %{_bindir}/vmdetect
 
 %files -n lib%{name}%{_libvrs}
 %defattr(-,root,root)
 %doc README.md
 %license LICENSE
-%{_libdir}/*.so.*
+%{_libdir}/*.so.%{MAJOR_VERSION}.%{MINOR_VERSION}
 
 %files devel
 %defattr(-,root,root)
+%doc README.md
+%license LICENSE
+%{_libdir}/*.so.%{MAJOR_VERSION}
 %{_libdir}/*.so
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*.pc
