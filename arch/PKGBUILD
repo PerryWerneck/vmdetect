@@ -2,7 +2,7 @@
 
 pkgname=vmdetect
 
-pkgver=1.1
+pkgver=1.3.4+git20250117
 pkgrel=0
 pkgdesc="Detect when running under virtual machine"
 url="https://github.com/PerryWerneck/vmdetect.git"

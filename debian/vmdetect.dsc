@@ -1,6 +1,6 @@
 Format: 1.0
 Source: vmdetect
-Version: 2.2.0
+Version: 1.3.4+git20250117
 Binary: vmdetect
 Maintainer: Perry Werneck <perry.werneck@gmail.com>
 Architecture: any

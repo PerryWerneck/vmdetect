@@ -1,7 +1,7 @@
 #
 # spec file for package vmdetect
 #
-# Copyright (c) 2024 SUSE LINUX GmbH, Nuernberg, Germany.
+# Copyright (c) <2024> Perry Werneck <perry.werneck@gmail.com>.
 #
 # All modifications and additions to the file contributed by third parties
 # remain the property of their copyright owners, unless otherwise agreed
@@ -12,7 +12,7 @@
 # license that conforms to the Open Source Definition (Version 1.9)
 # published by the Open Source Initiative.
 
-# Please submit bugfixes or comments via http://bugs.opensuse.org/
+# Please submit bugfixes or comments via https://github.com/PerryWerneck/vmdetect/issues
 #
 
 Summary:		Detect virtual machine environments
