@@ -48,5 +48,4 @@ jobs:
       - name: Prepare Build
         run: meson setup --reconfigure .build
       - name: Run Build
-        run: meson compile -v -C .build vmdetect:static_library vmdetect:executable
-        
+        run: meson compile -v -C .build
