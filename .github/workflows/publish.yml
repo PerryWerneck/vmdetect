@@ -83,22 +83,22 @@ jobs:
           omitBody: true
           omitPrereleaseDuringUpdate: true
           replacesArtifacts: true
-#  pypi:
-#    runs-on: ubuntu-latest
-#    name: Publish to pypi
-#    environment:
-#      name: pypi
-#      url: https://pypi.org/p/smbios
-#    permissions:
-#      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing      
-#    steps:
-#      - name: Fetch Sources
-#        uses: actions/checkout@v3
-#        with:
-#          submodules: true
-#      - name: Install Python Dependencies
-#        run: pip install meson ninja build
-#      - name: Build package
-#        run: python3 -m build -s
-#      - name: Publishing package
-#        uses: pypa/gh-action-pypi-publish@release/v1
+  pypi:
+    runs-on: ubuntu-latest
+    name: Publish to pypi
+    environment:
+      name: pypi
+      url: https://pypi.org/p/virtualmachine
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing      
+    steps:
+      - name: Fetch Sources
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install Python Dependencies
+        run: pip install meson ninja build
+      - name: Build package
+        run: python3 -m build -s
+      - name: Publishing package
+        uses: pypa/gh-action-pypi-publish@release/v1
