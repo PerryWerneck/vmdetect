@@ -197,6 +197,8 @@ if cxx.get_id() != 'msvc'
     pkg.generate(
       name: meson.project_name(),
       description: project_description,
+      requires_private: [ lib_deps ],
+      libraries_private: [ lib_deps ],
       libraries: [ '-lvmdetect' ]
     )
 

@@ -1,0 +1,485 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Perry Werneck <perry.werneck@gmail.com>, 2022-2024.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: libudjat 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-01-13 22:59-0300\n"
+"PO-Revision-Date: 2025-01-10 15:10-0300\n"
+"Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.5\n"
+
+#~ msgid "default"
+#~ msgstr "padrão"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Agent has nothing to report"
+#~ msgstr "Agente não tem nada a informar"
+
+#~ msgid "Agent controller"
+#~ msgstr "Controlador de agentes"
+
+#~ msgid "Core/Module subsystem failed to initialize"
+#~ msgstr "Inicialização do módulo principal falhou"
+
+#~ msgid "Get agent properties"
+#~ msgstr "Obtém propriedades do agente"
+
+#~ msgid "System is ready"
+#~ msgstr "Sistema em funcionamento"
+
+#~ msgid "No abnormal state was detected"
+#~ msgstr "Nenhum estado anormal foi reportado"
+
+#~ msgid "Error activating state"
+#~ msgstr "Erro ao ativar estado"
+
+#~ msgid "Unexpected error activating state"
+#~ msgstr "Erro inesperado ao ativar estado"
+
+#, c++-format
+#~ msgid "Module '{}' is not loaded"
+#~ msgstr "Modulo '{}' não foi carregado"
+
+#, c++-format
+#~ msgid "I dont know how to execute '{}'"
+#~ msgstr "Não sei como executar '{}'"
+
+#~ msgid "System error"
+#~ msgstr "Erro de sistema"
+
+#~ msgid "Operation failed"
+#~ msgstr "Operação falhou"
+
+#~ msgid "on"
+#~ msgstr "ligado"
+
+#~ msgid "off"
+#~ msgstr "desligado"
+
+#~ msgid "Unable to set environment variable"
+#~ msgstr "Incapaz de setar variável de ambiente"
+
+#, c++-format
+#~ msgid "Usage:\t{} [options]"
+#~ msgstr "Usage:\t{} [opções]"
+
+#~ msgid "Invalid property"
+#~ msgstr "Propriedade inválida"
+
+#~ msgid "yes"
+#~ msgstr "sim"
+
+#~ msgid "true"
+#~ msgstr "verdadeiro"
+
+#~ msgid "no"
+#~ msgstr "não"
+
+#~ msgid "false"
+#~ msgstr "falso"
+
+#~ msgid "Operation has failed"
+#~ msgstr "Operação falhou"
+
+#~ msgid "System Error"
+#~ msgstr "Erro de sistema"
+
+#~ msgid "Information"
+#~ msgstr "Informação"
+
+#~ msgid "Ok"
+#~ msgstr "Ok"
+
+#~ msgid "The request succeeded."
+#~ msgstr "Requisição concluída com sucesso."
+
+#~ msgid "Redirected"
+#~ msgstr "Redirecionado"
+
+#~ msgid "The request was redirected to another URL."
+#~ msgstr "Requisição foi redirecionada para outra URL."
+
+#~ msgid "Bad Request"
+#~ msgstr "Requisição inválida"
+
+#~ msgid ""
+#~ "The server cannot or will not process the request due to an apparent "
+#~ "client error (e.g., malformed request syntax, size too large, invalid "
+#~ "request message framing, or deceptive request routing)."
+#~ msgstr ""
+#~ "O servidor não pode ou não processará o pedido devido a um possível erro "
+#~ "do cliente, por exemplo, requisição com sintaxe errada, resultado muito "
+#~ "grande, enquadramento inválido or problema de rota."
+
+#~ msgid "Unauthorized"
+#~ msgstr "Não autorizado"
+
+#~ msgid ""
+#~ "Authentication is required and has failed or has not yet been provided."
+#~ msgstr "Autenticação falhou ou não foi fornecida."
+
+#~ msgid "Forbidden"
+#~ msgstr "Proibido"
+
+#~ msgid ""
+#~ "The request contained valid data and was understood by the server, but "
+#~ "the server is refusing action."
+#~ msgstr ""
+#~ "A requisição contem dados válidos e foi reconhecida pelo servidor, porem, "
+#~ "o servidor se recusou a atuar."
+
+#~ msgid "Not found"
+#~ msgstr "Não encontrado"
+
+#~ msgid ""
+#~ "The requested resource could not be found but may be available in the "
+#~ "future."
+#~ msgstr ""
+#~ "O recurso pedido não foi encontrado mas pode ficar disponível no futuro."
+
+#~ msgid "Proxy Authentication Required"
+#~ msgstr "Proxy exige autenticação"
+
+#~ msgid "The client must first authenticate itself with the proxy."
+#~ msgstr "O cliente deve primeiro autenticar no proxy."
+
+#~ msgid "Request Timeout"
+#~ msgstr "Tempo da requisição esgotado"
+
+#~ msgid ""
+#~ "The client did not produce a request within the time that the server was "
+#~ "prepared to wait."
+#~ msgstr ""
+#~ "O cliente não gerou uma requisição no tempo que o servidor estava "
+#~ "preparado para esperar."
+
+#~ msgid "Gone"
+#~ msgstr "Gone"
+
+#~ msgid ""
+#~ "The resource requested was previously in use but is no longer available "
+#~ "and will not be available again."
+#~ msgstr "O recurso pedido foi usado antes mas não estão mais disponívei."
+
+#~ msgid "Too many requests"
+#~ msgstr "Muitas requisições"
+
+#~ msgid ""
+#~ "Something is making your server work too hard, and it just can’t keep up"
+#~ msgstr "Algo está fazendo seu servidor trabalhar além do limite"
+
+#~ msgid "Client error"
+#~ msgstr "Erro de cliente"
+
+#~ msgid "Internal error"
+#~ msgstr "Erro interno"
+
+#~ msgid ""
+#~ "The server has encountered a situation it does not know how to handle."
+#~ msgstr "O servidor encontrou uma situação que ele não sabe como resolver."
+
+#~ msgid "Not Implemented"
+#~ msgstr "Não implementado"
+
+#~ msgid ""
+#~ "The request method is not supported by the server and cannot be handled."
+#~ msgstr ""
+#~ "O método usado na requisição não é suportado pelo servidor e não pode ser "
+#~ "atendido."
+
+#~ msgid "Bad gateway"
+#~ msgstr "Gateway inválido"
+
+#~ msgid ""
+#~ "The server, while working as a gateway to get a response needed to handle "
+#~ "the request, got an invalid response."
+#~ msgstr "O servidor está atuando como proxy e recebeu uma resposta inválida."
+
+#~ msgid "Service Unavailable"
+#~ msgstr "Serviço indisponível"
+
+#~ msgid ""
+#~ "The server is not ready to handle the request. Common causes are a server "
+#~ "that is down for maintenance or that is overloaded."
+#~ msgstr ""
+#~ "O servidor não está pronto para atender à requisição. Pode estar inativo "
+#~ "para manutenção ou sobrecarregado."
+
+#~ msgid "Gateway timeout"
+#~ msgstr "Timeout no acesso ao gateway"
+
+#~ msgid "The server is acting as a gateway and cannot get a response in time."
+#~ msgstr ""
+#~ "O servidor está atuando como proxy e não conseguiu obter uma resposta no "
+#~ "tempo esperado."
+
+#~ msgid "HTTP Version Not Supported"
+#~ msgstr "Versão HTTP não suportada"
+
+#~ msgid "The HTTP version used in the request is not supported by the server."
+#~ msgstr "A versão HTTP usada na requisição não é suportada pelo servidor."
+
+#~ msgid "Server error"
+#~ msgstr "Erro de servidor"
+
+#~ msgid "Unexpected HTTP error code"
+#~ msgstr "Código de erro HTTP inesperado"
+
+#~ msgid "The HTTP error code is unknown"
+#~ msgstr "Código de erro HTTP desconhecido"
+
+#~ msgid "one second"
+#~ msgstr "um segundo"
+
+#~ msgid "one hour"
+#~ msgstr "uma hora"
+
+#, c++-format
+#~ msgid "{} hours"
+#~ msgstr "{} horas"
+
+#~ msgid "one minute"
+#~ msgstr "um minuto"
+
+#, c++-format
+#~ msgid "{} minutes"
+#~ msgstr "{} minutos"
+
+#, c++-format
+#~ msgid " {} seconds"
+#~ msgstr " {} segundos"
+
+#, c++-format
+#~ msgid " {} milliseconds"
+#~ msgstr " {} millisegundos"
+
+#~ msgid "The message template is invalid"
+#~ msgstr "O template de mensagem não é válido"
+
+#, c++-format
+#~ msgid "Unable to get value of '{}'"
+#~ msgstr "Incapaz de obter valor para '{}'"
+
+#~ msgid "\\StringFileInfo\\080904B0\\FileDescription"
+#~ msgstr "\\StringFileInfo\\041604B0\\FileDescription"
+
+#~ msgid "The request has timed out"
+#~ msgstr "Tempo da requisição esgotado"
+
+#~ msgid "Cant resolve hostname"
+#~ msgstr "Não foi possivel resolver nome do host"
+
+#~ msgid "\t\tStart service"
+#~ msgstr "\t\tIniciar serviço"
+
+#~ msgid "\t\tStop service"
+#~ msgstr "\t\tParar serviço"
+
+#~ msgid "\t\tInstall service"
+#~ msgstr "\t\tInstalar serviço"
+
+#~ msgid "\t\tUninstall service"
+#~ msgstr "\t\tDesinstalar serviço"
+
+#~ msgid "\t\tReinstall service"
+#~ msgstr "\t\tReinstalar serviço"
+
+#~ msgid "\t\tBlock access to 'net stop' on this request"
+#~ msgstr "\t\tBloquear acesso a 'net stop' no serviço"
+
+#~ msgid "Yes"
+#~ msgstr "Sim"
+
+#~ msgid "No"
+#~ msgstr "Não"
+
+#~ msgid "Less than one minute"
+#~ msgstr "Menos de um minuto"
+
+#~ msgid "{d} {D}"
+#~ msgstr "{d} {D}"
+
+#~ msgid "{h} {H}"
+#~ msgstr "{h} {H}"
+
+#~ msgid "{d} {D} and {h} {H}"
+#~ msgstr "{d} {D} e {h} {H}"
+
+#~ msgid "{m} {M}"
+#~ msgstr "{m} {M}"
+
+#~ msgid "{d} {D} and {m} {M}"
+#~ msgstr "{d} {D} e {m} {M}"
+
+#~ msgid "{h} {H} and {m} {M}"
+#~ msgstr "{h} {H} e {m} {M}"
+
+#~ msgid "{d} {D}, {h} {H} and {m} {M}"
+#~ msgstr "{d} {D}, {h} {H} e {m} {M}"
+
+#~ msgid "days"
+#~ msgstr "dias"
+
+#~ msgid "day"
+#~ msgstr "dia"
+
+#~ msgid "hours"
+#~ msgstr "horas"
+
+#~ msgid "hour"
+#~ msgstr "hora"
+
+#~ msgid "minutes"
+#~ msgstr "minutos"
+
+#~ msgid "minute"
+#~ msgstr "minuto"
+
+#~ msgid "second"
+#~ msgstr "segundo"
+
+#~ msgid "seconds"
+#~ msgstr "segundos"
+
+#~ msgid "File protocol"
+#~ msgstr "Protocolo de arquivo"
+
+#~ msgid "Subprocess/Script protocol"
+#~ msgstr "Protocolo para subprocesso ou script"
+
+#~ msgid "undefined"
+#~ msgstr "indefinido"
+
+#~ msgid "object"
+#~ msgstr "objeto"
+
+#~ msgid "string"
+#~ msgstr "texto"
+
+#~ msgid "signed"
+#~ msgstr "com sinal"
+
+#~ msgid "unsigned"
+#~ msgstr "sem sinal"
+
+#~ msgid "real"
+#~ msgstr "ponto flutuante"
+
+#~ msgid "boolean"
+#~ msgstr "condicional"
+
+#~ msgid "fraction"
+#~ msgstr "fração"
+
+#~ msgid "icon"
+#~ msgstr "ícone"
+
+#~ msgid "integer"
+#~ msgstr "inteiro"
+
+#~ msgid "number"
+#~ msgstr "numérico"
+
+#~ msgid "Unknown"
+#~ msgstr "Desconhecido"
+
+#, c++-format
+#~ msgid "Required attribute '{}' is missing"
+#~ msgstr "Atributo necessário '{}' não foi encontrado"
+
+#~ msgid "The required attribute 'cmdline' is missing"
+#~ msgstr "Atributo necessário 'cmdline' não está disponível"
+
+#~ msgid "Cant set subprocess user id"
+#~ msgstr "Incapaz de definir o usuário do subprocesso"
+
+#~ msgid "Cant set subprocess group id"
+#~ msgstr "Incapaz de definir o grupo do subprocesso"
+
+#~ msgid "System is not ready"
+#~ msgstr "Sistema não está em funcionamento"
+
+#~ msgid "Invalid response type"
+#~ msgstr "Resposta de tipo inválido"
+
+#~ msgid "Alert controller"
+#~ msgstr "Controlador de alertas"
+
+#, c++-format
+#~ msgid "Unable to determine internal alert type for node <{}>"
+#~ msgstr "Incapaz de determinar o tipo de alerta interno para o nó <{}>"
+
+#, c++-format
+#~ msgid "Unable to create alert for node <{}>"
+#~ msgstr "Incapaz de criar alerta para o nó <{}>"
+
+#~ msgid "Abstract value is unable to handle items"
+#~ msgstr "Valor abstrato não consegue manipular items"
+
+#, c++-format
+#~ msgid "Cant find child '{}'"
+#~ msgstr "Não encontrei elemento '{}'"
+
+#, c++-format
+#~ msgid "Unable to append '{}' on abstract value"
+#~ msgstr "Incapaz de adicionar '{}' em um valor abstrato"
+
+#, c++-format
+#~ msgid "Unable to set '{}' as '{}' on abstract value"
+#~ msgstr "Incapaz de setar '{}' como '{}' em um valor abstrato"
+
+#~ msgid "Agent subsystem is inactive"
+#~ msgstr "Subsistema de agentes está inativo"
+
+#~ msgid "B"
+#~ msgstr "B"
+
+#~ msgid "GB"
+#~ msgstr "GB"
+
+#~ msgid "Gb"
+#~ msgstr "Gb"
+
+#~ msgid "Invalid timer value"
+#~ msgstr "Valor de timer inválido"
+
+#~ msgid "Kb"
+#~ msgstr "Kb"
+
+#~ msgid "Mb"
+#~ msgstr "Mb"
+
+#~ msgid "No reports on this path"
+#~ msgstr "Nenhum relatório no caminho informado"
+
+#~ msgid "System is configured"
+#~ msgstr "Sistema está configurado"
+
+#~ msgid "Tb"
+#~ msgstr "Tb"
+
+#~ msgid "This request has no arguments"
+#~ msgstr "A requisição não tem argumentos"
+
+#~ msgid "Unable to determine alert type for node <{}>"
+#~ msgstr "Incapaz de determinar o tipo de alerta para o nó <{}>"
+
+#~ msgid "Unexpected error during reconfiguration"
+#~ msgstr "Erro inesperado durante a configuração"
+
+#~ msgid "b"
+#~ msgstr "b"
