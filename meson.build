@@ -56,7 +56,6 @@ compiler_flags = [
   '-fvisibility=hidden',
   '-fPIC',
   '-ggdb3',
-  '-ffat-lto-objects',
   '-fvisibility=hidden',
   '-fPIC'
 	]
@@ -221,6 +220,7 @@ static = static_library(
   config_src + lib_src,
   install: true,
   dependencies: lib_deps,
+  cpp_args: [ '-fno-lto' ],
   include_directories: includes_dir,
   link_args: linker_flags
 )
@@ -243,6 +243,7 @@ else
     config_src + lib_src,
     install: true,
     version : libversion,
+    cpp_args: [ '-ffat-lto-objects' ],
     gnu_symbol_visibility: 'hidden',
     dependencies: lib_deps,
     include_directories: includes_dir,
