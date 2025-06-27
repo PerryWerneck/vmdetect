@@ -142,21 +142,15 @@ if host_machine.system() == 'windows'
     'src/libvmdetect/os/windows/virtualmachine.cc'
   ]
 
-  wmi = dependency('wmi++',required:false)
-  if wmi.found()
-    lib_deps += [
-      dependency('wmi++')
-    ]
-  else
-    lib_src += [
-      'wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
-      'wmi/src/wmi.cpp',
-      'wmi/src/wmiresult.cpp',
-    ]
-    lib_includes += [ 'wmi/include' ]
-    if cxx.get_id() != 'msvc'
-      linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
-    endif
+  lib_src += [
+    'src/wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
+    'src/wmi/src/wmi.cpp',
+    'src/wmi/src/wmiresult.cpp',
+  ]
+  lib_includes += [ 'src/wmi/include' ]
+
+  if cxx.get_id() != 'msvc'
+    linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
   endif
 
 else
