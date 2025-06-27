@@ -225,6 +225,11 @@ static = static_library(
   link_args: linker_flags
 )
 
+static_library = declare_dependency(
+  link_with : static,
+  include_directories : includes_dir,
+) 
+
 if cxx.get_id() == 'msvc'
 
   executable(
