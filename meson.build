@@ -255,6 +255,11 @@ else
     link_args: linker_flags
   )
 
+  dynamic_library = declare_dependency(
+    link_with : dynamic,
+    include_directories : includes_dir,
+  ) 
+
   executable(
     'vmdetect',
     config_src + app_src,
