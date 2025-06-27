@@ -17,7 +17,7 @@
 
 Summary:		Detect virtual machine environments
 Name:			vmdetect
-Version:		1.3.4+git20250117
+Version: 1.3.4
 Release:		0
 License:		LGPL-3.0
 Source:			%{name}-%{version}.tar.xz

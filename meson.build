@@ -56,7 +56,6 @@ compiler_flags = [
   '-fvisibility=hidden',
   '-fPIC',
   '-ggdb3',
-  '-ffat-lto-objects',
   '-fvisibility=hidden',
   '-fPIC'
 	]
@@ -143,21 +142,15 @@ if host_machine.system() == 'windows'
     'src/libvmdetect/os/windows/virtualmachine.cc'
   ]
 
-  wmi = dependency('wmi++',required:false)
-  if wmi.found()
-    lib_deps += [
-      dependency('wmi++')
-    ]
-  else
-    lib_src += [
-      'wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
-      'wmi/src/wmi.cpp',
-      'wmi/src/wmiresult.cpp',
-    ]
-    lib_includes += [ 'wmi/include' ]
-    if cxx.get_id() != 'msvc'
-      linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
-    endif
+  lib_src += [
+    'src/wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
+    'src/wmi/src/wmi.cpp',
+    'src/wmi/src/wmiresult.cpp',
+  ]
+  lib_includes += [ 'src/wmi/include' ]
+
+  if cxx.get_id() != 'msvc'
+    linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
   endif
 
 else
@@ -197,6 +190,8 @@ if cxx.get_id() != 'msvc'
     pkg.generate(
       name: meson.project_name(),
       description: project_description,
+      requires_private: [ lib_deps ],
+      libraries_private: [ lib_deps ],
       libraries: [ '-lvmdetect' ]
     )
 
@@ -219,9 +214,15 @@ static = static_library(
   config_src + lib_src,
   install: true,
   dependencies: lib_deps,
+  cpp_args: [ '-fno-lto' ],
   include_directories: includes_dir,
   link_args: linker_flags
 )
+
+static_library = declare_dependency(
+  link_with : static,
+  include_directories : includes_dir,
+) 
 
 if cxx.get_id() == 'msvc'
 
@@ -241,11 +242,17 @@ else
     config_src + lib_src,
     install: true,
     version : libversion,
+    cpp_args: [ '-ffat-lto-objects' ],
     gnu_symbol_visibility: 'hidden',
     dependencies: lib_deps,
     include_directories: includes_dir,
     link_args: linker_flags
   )
+
+  dynamic_library = declare_dependency(
+    link_with : dynamic,
+    include_directories : includes_dir,
+  ) 
 
   executable(
     'vmdetect',
