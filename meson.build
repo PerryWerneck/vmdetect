@@ -173,13 +173,13 @@ if cxx.get_id() != 'msvc'
   if host_machine.system() == 'windows'
 
     pkg.generate(
-      name: meson.project_name(),
+      name: 'lib' + meson.project_name(),
       description: project_description,
       libraries: [ '-lvmdetect.dll' ]
     )
 
     pkg.generate(
-      name: meson.project_name() + '-static',
+      name: 'lib' + meson.project_name() + '-static',
       description: project_description,
       libraries: [ '-lvmdetect' ],
       requires: [ lib_deps ],
@@ -188,7 +188,7 @@ if cxx.get_id() != 'msvc'
   else
 
     pkg.generate(
-      name: meson.project_name(),
+      name: 'lib' + meson.project_name(),
       description: project_description,
       requires_private: [ lib_deps ],
       libraries_private: [ lib_deps ],
@@ -196,7 +196,7 @@ if cxx.get_id() != 'msvc'
     )
 
     pkg.generate(
-      name: meson.project_name() + '-static',
+      name: 'lib' + meson.project_name() + '-static',
       description: project_description,
       libraries: [ '-l:libvmdetect.a' ],
       requires: [ lib_deps ],
