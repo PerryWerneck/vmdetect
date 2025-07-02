@@ -222,6 +222,7 @@ static = static_library(
 static_library = declare_dependency(
   link_with : static,
   include_directories : includes_dir,
+  link_args: linker_flags,
 ) 
 
 if cxx.get_id() == 'msvc'
