@@ -7,4 +7,3 @@ src/python/init.c
 src/include/private/python.h
 src/include/vmdetect/defs.h
 src/include/vmdetect/virtualmachine.h
-src/wmi/include/unistd.h
