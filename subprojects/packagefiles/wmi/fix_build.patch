@@ -1,0 +1,25 @@
+diff --git a/diaa_sami_comsupp/diaa_sami_comsupp.cpp b/diaa_sami_comsupp/diaa_sami_comsupp.cpp
+index d994164..cb77a72 100644
+--- a/diaa_sami_comsupp/diaa_sami_comsupp.cpp
++++ b/diaa_sami_comsupp/diaa_sami_comsupp.cpp
+@@ -4,13 +4,13 @@
+ #include <stdlib.h>
+ #include <strsafe.h>
+ 
+-void __stdcall _com_issue_error(HRESULT hr)
+-{
+-	#define MESSAGE_LENGTH_MAX 128
+-	char message[MESSAGE_LENGTH_MAX];
+-	StringCbPrintfA(message, MESSAGE_LENGTH_MAX, "_com_issue_error() called with parameter HRESULT = %lu", hr);
+-	MessageBox(NULL, message, "Error", MB_OK | MB_ICONERROR);
+-}
++//void __stdcall _com_issue_error(HRESULT hr)
++//{
++//	#define MESSAGE_LENGTH_MAX 128
++//	char message[MESSAGE_LENGTH_MAX];
++//	StringCbPrintfA(message, MESSAGE_LENGTH_MAX, "_com_issue_error() called with parameter HRESULT = %lu", hr);
++//	MessageBox(NULL, message, "Error", MB_OK | MB_ICONERROR);
++//}
+ 
+ namespace _com_util
+ {

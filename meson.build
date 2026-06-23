@@ -56,9 +56,7 @@ compiler_flags = [
   '-fvisibility=hidden',
   '-fPIC',
   '-ggdb3',
-  '-fvisibility=hidden',
-  '-fPIC'
-	]
+]
 
 if enable_debug
   compiler_flags += [
@@ -142,12 +140,9 @@ if host_machine.system() == 'windows'
     'src/libvmdetect/os/windows/virtualmachine.cc'
   ]
 
-  lib_src += [
-    'src/wmi/diaa_sami_comsupp/diaa_sami_comsupp.cpp',
-    'src/wmi/src/wmi.cpp',
-    'src/wmi/src/wmiresult.cpp',
+  lib_deps += [
+    dependency('wmi', fallback: ['wmi'])
   ]
-  lib_includes += [ 'src/wmi/include' ]
 
   if cxx.get_id() != 'msvc'
     linker_flags += [ '-lwbemuuid', '-loleaut32', '-lole32' ]
@@ -178,13 +173,6 @@ if cxx.get_id() != 'msvc'
       libraries: [ '-lvmdetect.dll' ]
     )
 
-    pkg.generate(
-      name: meson.project_name() + '-static',
-      description: project_description,
-      libraries: [ '-lvmdetect' ],
-      requires: [ lib_deps ],
-    )
-
   else
 
     pkg.generate(
@@ -193,13 +181,6 @@ if cxx.get_id() != 'msvc'
       requires_private: [ lib_deps ],
       libraries_private: [ lib_deps ],
       libraries: [ '-lvmdetect' ]
-    )
-
-    pkg.generate(
-      name: meson.project_name() + '-static',
-      description: project_description,
-      libraries: [ '-l:libvmdetect.a' ],
-      requires: [ lib_deps ],
     )
 
   endif
