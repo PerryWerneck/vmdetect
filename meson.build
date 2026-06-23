@@ -20,7 +20,7 @@
 project(
 	'vmdetect', 
 	['c','cpp'],
-	version: '1.3.4',
+	version: '1.3.5',
 	default_options : ['c_std=c11', 'cpp_std=c++17'],
 	license: 'GPL-3.0-or-later',
 )
