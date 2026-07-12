@@ -20,7 +20,7 @@ jobs:
     #   - https://gh.io/supported-runners-and-hardware-resources
     #   - https://gh.io/using-larger-runners (GitHub.com only)
     # Consider using larger runners or machines with greater resources for possible analysis time improvements.
-    runs-on: 'ubuntu-24.04'
+    runs-on: 'ubuntu-26.04'
     permissions:
       # required for all workflows
       security-events: write
@@ -42,8 +42,8 @@ jobs:
 
     - name: Install Packages
       run: |
-        echo 'deb https://download.opensuse.org/repositories/home:/PerryWerneck:/udjat/xUbuntu_24.04/ /' | sudo tee /etc/apt/sources.list.d/home:PerryWerneck:udjat.list
-        curl -fsSL https://download.opensuse.org/repositories/home:/PerryWerneck:/udjat/xUbuntu_24.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_PerryWerneck_udjat.gpg > /dev/null
+        echo 'deb https://download.opensuse.org/repositories/home:/PerryWerneck:/udjat/xUbuntu_26.04/ /' | sudo tee /etc/apt/sources.list.d/home:PerryWerneck:udjat.list
+        curl -fsSL https://download.opensuse.org/repositories/home:/PerryWerneck:/udjat/xUbuntu_26.04/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/home_PerryWerneck_udjat.gpg > /dev/null
         sudo apt-get update
         sudo apt-get install --yes meson pkg-config gettext libdbus-1-dev
 
