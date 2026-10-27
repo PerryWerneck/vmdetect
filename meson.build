@@ -20,8 +20,13 @@
 project(
 	'vmdetect', 
 	['c','cpp'],
-	version: '1.3.5',
-	default_options : ['c_std=c11', 'cpp_std=c++17'],
+	version: '1.3.6',
+	default_options : [
+    'c_std=c11', 
+    'cpp_std=c++17', 
+    'buildtype=release', 
+    'default_library=both',
+  ],
 	license: 'GPL-3.0-or-later',
 )
 
@@ -190,27 +195,11 @@ endif
 #
 # Targets
 #
-static = static_library(
-  'vmdetect', 
-  config_src + lib_src,
-  install: true,
-  dependencies: lib_deps,
-  cpp_args: [ '-fno-lto' ],
-  include_directories: includes_dir,
-  link_args: linker_flags
-)
-
-static_library = declare_dependency(
-  link_with : static,
-  include_directories : includes_dir,
-  link_args: linker_flags,
-) 
-
 if cxx.get_id() == 'msvc'
 
   executable(
     'vmdetect',
-    config_src + app_src,
+    config_src + lib_src + app_src,
     install: true,
     link_with : static,
     include_directories: includes_dir,
@@ -219,11 +208,12 @@ if cxx.get_id() == 'msvc'
 
 else
 
-  dynamic = shared_library(
+  libvmdetect = library(
     'vmdetect', 
     config_src + lib_src,
     install: true,
     version : libversion,
+    soversion : libversion,
     cpp_args: [ '-ffat-lto-objects' ],
     gnu_symbol_visibility: 'hidden',
     dependencies: lib_deps,
@@ -231,8 +221,8 @@ else
     link_args: linker_flags
   )
 
-  dynamic_library = declare_dependency(
-    link_with : dynamic,
+  libvmdetect_dep = declare_dependency(
+    link_with : libvmdetect,
     include_directories : includes_dir,
   ) 
 
@@ -240,7 +230,7 @@ else
     'vmdetect',
     config_src + app_src,
     install: true,
-    link_with : dynamic,
+    link_with : libvmdetect,
     include_directories: includes_dir,
     link_args: linker_flags
   )
@@ -264,10 +254,9 @@ if not meson.is_cross_build()
   if py.found()
     import('python').find_installation().extension_module(
       'virtualmachine',
-      config_src + [ 'src/python/init.c',  'src/python/get.cc' ],
+      config_src + lib_src + [ 'src/python/init.c',  'src/python/get.cc' ],
       install: true,
       install_tag: 'python',
-      link_with : static,
       dependencies: lib_deps + [ py ],
       include_directories: includes_dir,
       link_args: linker_flags

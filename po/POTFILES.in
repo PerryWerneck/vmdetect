@@ -4,6 +4,3 @@ src/libvmdetect/os/windows/virtualmachine.cc
 src/python/get.cc
 src/vmdetect/vmdetect.cc
 src/python/init.c
-src/include/private/python.h
-src/include/vmdetect/defs.h
-src/include/vmdetect/virtualmachine.h
